@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Admin — Rose Mutua & Advocates CMS</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0c0c0b;--surface:#141413;--card:#1a1a18;--border:rgba(255,255,255,0.07);
+  --gold:#c9a84c;--gold-light:#e2c47a;--gold-dim:rgba(201,168,76,0.12);
+  --white:#f4f1eb;--muted:#7a7869;--danger:#c0392b;--success:#27ae60;
+  --serif:'Cormorant Garamond',Georgia,serif;--sans:'Outfit',sans-serif;
+}
+html{height:100%}
+body{background:var(--bg);color:var(--white);font-family:var(--sans);font-weight:300;min-height:100%;display:flex;flex-direction:column}
+
+/* LOGIN */
+#loginScreen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:1000;flex-direction:column}
+.login-box{background:var(--surface);border:1px solid var(--border);padding:52px 48px;width:100%;max-width:420px;position:relative}
+.login-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--gold)}
+.login-logo{font-family:var(--serif);font-size:1.3rem;color:var(--gold);margin-bottom:6px}
+.login-sub{font-size:.75rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:40px}
+.login-box h2{font-family:var(--serif);font-size:2rem;font-weight:300;margin-bottom:28px}
+.login-box h2 em{font-style:italic;color:var(--gold-light)}
+.field{margin-bottom:18px}
+.field label{display:block;font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.field input,.field select,.field textarea{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--white);padding:12px 14px;font-family:var(--sans);font-size:.9rem;font-weight:300;outline:none;transition:border-color .3s;resize:vertical}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--gold)}
+.field select option{background:var(--bg)}
+.field textarea{min-height:80px}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.btn{padding:11px 24px;font-family:var(--sans);font-size:.75rem;letter-spacing:.16em;text-transform:uppercase;font-weight:600;border:none;cursor:pointer;transition:all .3s;display:inline-flex;align-items:center;gap:8px}
+.btn-gold{background:var(--gold);color:#000}
+.btn-gold:hover{background:var(--gold-light)}
+.btn-outline{background:transparent;border:1px solid var(--gold);color:var(--gold)}
+.btn-outline:hover{background:var(--gold);color:#000}
+.btn-danger{background:var(--danger);color:#fff;font-size:.68rem;padding:7px 14px}
+.btn-danger:hover{background:#a93226}
+.btn-sm{padding:7px 16px;font-size:.68rem}
+.btn-full{width:100%;justify-content:center;padding:14px}
+.login-error{background:rgba(192,57,43,.15);border:1px solid rgba(192,57,43,.4);color:#e74c3c;padding:11px 14px;font-size:.83rem;margin-top:16px;display:none}
+
+/* APP */
+#app{display:none;flex:1;flex-direction:column}
+#app.visible{display:flex}
+
+.topbar{height:56px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:50}
+.topbar-brand{font-family:var(--serif);font-size:1rem;color:var(--gold);letter-spacing:.06em}
+.topbar-brand span{color:var(--muted);font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;margin-left:14px;font-family:var(--sans);font-weight:400}
+.topbar-right{display:flex;align-items:center;gap:12px}
+
+.app-body{display:flex;flex:1;min-height:0}
+.sidebar{width:220px;background:var(--surface);border-right:1px solid var(--border);padding:20px 0;flex-shrink:0;overflow-y:auto}
+.sidebar-section-label{font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);padding:8px 26px 6px;display:block}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 16px;cursor:pointer;font-size:.8rem;color:var(--muted);transition:all .2s;border:none;background:none;width:100%;text-align:left;font-family:var(--sans)}
+.nav-item:hover{color:var(--white);background:rgba(255,255,255,.04)}
+.nav-item.active{color:var(--gold);background:var(--gold-dim)}
+.nav-item .icon{font-size:.95rem;width:18px;text-align:center}
+
+.main{flex:1;overflow-y:auto;padding:32px 36px}
+.panel{display:none}
+.panel.active{display:block}
+.panel-header{margin-bottom:28px}
+.panel-header h2{font-family:var(--serif);font-size:2rem;font-weight:300;margin-bottom:6px}
+.panel-header h2 em{font-style:italic;color:var(--gold-light)}
+.panel-header p{color:var(--muted);font-size:.85rem;line-height:1.7}
+.pdivider{width:40px;height:1px;background:var(--gold);margin:14px 0}
+
+.card{background:var(--card);border:1px solid var(--border);padding:28px;margin-bottom:20px;position:relative}
+.card-title{font-family:var(--serif);font-size:1.1rem;margin-bottom:20px;display:flex;align-items:center;gap:10px}
+.card-title::before{content:'';width:20px;height:1px;background:var(--gold)}
+
+.save-bar{display:flex;align-items:center;justify-content:flex-end;gap:12px;padding-top:20px;border-top:1px solid var(--border);margin-top:20px}
+.save-status{font-size:.78rem;color:var(--muted);margin-right:auto}
+.save-status.ok{color:var(--success)}
+.save-status.err{color:var(--danger)}
+
+.array-item{background:var(--bg);border:1px solid var(--border);padding:18px;margin-bottom:10px;position:relative}
+.array-item-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.array-item-lbl{font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+
+.tag-editor{display:flex;flex-wrap:wrap;gap:8px;align-items:center;min-height:36px}
+.tag{background:var(--gold-dim);border:1px solid rgba(201,168,76,.25);color:var(--gold);font-size:.68rem;letter-spacing:.12em;padding:4px 10px;display:flex;align-items:center;gap:6px}
+.tag-x{cursor:pointer;color:var(--muted);line-height:1}
+.tag-x:hover{color:var(--danger)}
+.tag-input{background:var(--bg);border:1px solid var(--border);color:var(--white);padding:4px 10px;font-size:.78rem;font-family:var(--sans);outline:none;width:130px}
+.tag-input:focus{border-color:var(--gold)}
+
+.media-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:14px}
+.media-item{background:var(--bg);border:1px solid var(--border);overflow:hidden;position:relative;aspect-ratio:1;cursor:pointer;transition:border-color .3s}
+.media-item:hover{border-color:var(--gold)}
+.media-item img{width:100%;height:100%;object-fit:cover}
+.media-overlay{position:absolute;inset:0;background:rgba(0,0,0,.6);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;opacity:0;transition:opacity .3s}
+.media-item:hover .media-overlay{opacity:1}
+.media-name{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.7);padding:5px 7px;font-size:.6rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+.upload-zone{border:2px dashed rgba(201,168,76,.25);padding:40px;text-align:center;cursor:pointer;transition:all .3s;background:var(--bg);margin-bottom:16px}
+.upload-zone:hover,.upload-zone.over{border-color:var(--gold);background:var(--gold-dim)}
+.upload-zone p{color:var(--muted);font-size:.85rem;margin-top:8px}
+
+.sub-table{width:100%;border-collapse:collapse}
+.sub-table th{text-align:left;font-size:.63rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);padding:9px 12px;font-weight:500}
+.sub-table td{padding:11px 12px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.82rem;vertical-align:top}
+.sub-table tr:hover td{background:rgba(255,255,255,.02)}
+
+.dash-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px}
+.dash-card{background:var(--card);border:1px solid var(--border);border-top:2px solid var(--gold);padding:22px 20px}
+.dash-num{font-family:var(--serif);font-size:2.2rem;font-weight:300;color:var(--gold)}
+.dash-lbl{font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+
+.photo-row{display:flex;align-items:flex-start;gap:14px;margin-top:12px}
+.photo-thumb{width:80px;height:80px;object-fit:cover;border:1px solid var(--border);display:block}
+.photo-ph{width:80px;height:80px;background:var(--bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:1.6rem;color:var(--muted);flex-shrink:0}
+.url-hint{font-size:.72rem;color:var(--gold);word-break:break-all;margin-top:6px;font-family:monospace}
+.hint{font-size:.73rem;color:var(--muted);margin-top:5px;line-height:1.5}
+
+.toast{position:fixed;bottom:24px;right:24px;background:var(--card);border:1px solid var(--border);border-left:3px solid var(--gold);padding:13px 20px;font-size:.82rem;z-index:9999;transform:translateX(130%);transition:transform .3s ease;max-width:300px}
+.toast.show{transform:translateX(0)}
+.toast.err{border-left-color:var(--danger)}
+
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;display:none;align-items:center;justify-content:center}
+.modal-bg.open{display:flex}
+.modal{background:var(--card);border:1px solid var(--border);padding:30px;max-width:680px;width:100%;max-height:90vh;overflow-y:auto}
+.modal h3{font-family:var(--serif);font-size:1.5rem;margin-bottom:16px}
+.modal-footer{display:flex;gap:10px;margin-top:18px;justify-content:flex-end}
+
+@media(max-width:768px){.sidebar{display:none}.main{padding:18px}.dash-grid{grid-template-columns:1fr 1fr}.field-row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">Rose Mutua & Advocates</div>
+    <div class="login-sub">Content Management System</div>
+    <h2>Admin <em>Login</em></h2>
+    <div class="field"><label>Username</label><input id="lUser" type="text" value="admin" autocomplete="username"/></div>
+    <div class="field"><label>Password</label><input id="lPass" type="password" placeholder="••••••••" autocomplete="current-password"/></div>
+    <button class="btn btn-gold btn-full" onclick="doLogin()">Sign In →</button>
+    <div class="login-error" id="lErr"></div>
+    <p style="color:var(--muted);font-size:.72rem;margin-top:18px;text-align:center">Default: admin / admin123</p>
+  </div>
+</div>
+
+<div id="app">
+  <div class="topbar">
+    <div class="topbar-brand">Rose Mutua & Advocates <span>CMS Admin</span></div>
+    <div class="topbar-right">
+      <a href="index.html" target="_blank" class="btn btn-outline btn-sm">🌐 View Website</a>
+      <button class="btn btn-sm" style="border:1px solid var(--border);color:var(--muted);background:none" onclick="logout()">Log Out</button>
+    </div>
+  </div>
+
+  <div class="app-body">
+    <div class="sidebar">
+      <span class="sidebar-section-label">Overview</span>
+      <button class="nav-item active" data-p="dashboard" onclick="sw(this)"><span class="icon">📊</span>Dashboard</button>
+      <span class="sidebar-section-label">Content</span>
+      <button class="nav-item" data-p="hero" onclick="sw(this)"><span class="icon">🏠</span>Hero</button>
+      <button class="nav-item" data-p="stats" onclick="sw(this)"><span class="icon">📈</span>Statistics</button>
+      <button class="nav-item" data-p="about" onclick="sw(this)"><span class="icon">👤</span>About / Founder</button>
+      <button class="nav-item" data-p="practice" onclick="sw(this)"><span class="icon">⚖️</span>Practice Areas</button>
+      <button class="nav-item" data-p="team" onclick="sw(this)"><span class="icon">👥</span>Our Team</button>
+      <button class="nav-item" data-p="results" onclick="sw(this)"><span class="icon">🏆</span>Notable Results</button>
+      <button class="nav-item" data-p="why" onclick="sw(this)"><span class="icon">✨</span>Why Choose Us</button>
+      <button class="nav-item" data-p="awards" onclick="sw(this)"><span class="icon">🎖️</span>Awards</button>
+      <button class="nav-item" data-p="community" onclick="sw(this)"><span class="icon">🌍</span>Community</button>
+      <button class="nav-item" data-p="testimonials" onclick="sw(this)"><span class="icon">💬</span>Testimonials</button>
+      <button class="nav-item" data-p="faq" onclick="sw(this)"><span class="icon">❓</span>FAQ</button>
+      <button class="nav-item" data-p="contact" onclick="sw(this)"><span class="icon">📞</span>Contact</button>
+      <span class="sidebar-section-label">Media & Data</span>
+      <button class="nav-item" data-p="media" onclick="sw(this)"><span class="icon">🖼️</span>Media Library</button>
+      <button class="nav-item" data-p="enquiries" onclick="sw(this)"><span class="icon">📬</span>Enquiries</button>
+      <span class="sidebar-section-label">Account</span>
+      <button class="nav-item" data-p="settings" onclick="sw(this)"><span class="icon">⚙️</span>Settings</button>
+    </div>
+
+    <div class="main">
+
+      <!-- DASHBOARD -->
+      <div class="panel active" id="panel-dashboard">
+        <div class="panel-header"><h2>Welcome <em>back</em></h2><div class="pdivider"></div><p>Manage all website content, photos, and enquiries from this panel.</p></div>
+        <div class="dash-grid">
+          <div class="dash-card"><div class="dash-num" id="d-sections">13</div><div class="dash-lbl">Content Sections</div></div>
+          <div class="dash-card"><div class="dash-num" id="d-images">0</div><div class="dash-lbl">Images Uploaded</div></div>
+          <div class="dash-card"><div class="dash-num" id="d-team">3</div><div class="dash-lbl">Team Members</div></div>
+          <div class="dash-card"><div class="dash-num" id="d-enquiries">0</div><div class="dash-lbl">Enquiries</div></div>
+        </div>
+        <div class="card"><div class="card-title">Quick Guide</div>
+          <p style="color:var(--muted);font-size:.88rem;line-height:1.9">
+            1. Click any section in the sidebar to edit website content.<br>
+            2. Go to <strong style="color:var(--white)">Media Library</strong> to upload photos, then use <strong style="color:var(--white)">"Choose Photo"</strong> in About or Team to assign them.<br>
+            3. All changes save automatically to your browser — open <strong style="color:var(--white)">index.html</strong> in the same browser to see updates live.<br>
+            4. Use <strong style="color:var(--white)">Enquiries</strong> to read messages submitted via the contact form.<br>
+            5. Export your data anytime using the <strong style="color:var(--white)">Export / Import</strong> button above.
+          </p>
+        </div>
+      </div>
+
+      <!-- HERO -->
+      <div class="panel" id="panel-hero">
+        <div class="panel-header"><h2>Hero <em>Section</em></h2><div class="pdivider"></div></div>
+
+        <div class="card">
+          <div class="card-title">Background Slideshow</div>
+          <p style="color:var(--muted);font-size:.83rem;margin-bottom:16px">Upload images to cycle behind the hero text. They will crossfade automatically. Recommended: landscape, high-res photos of the office or Machakos County.</p>
+          <div class="upload-zone" id="heroUploadZone" onclick="document.getElementById('heroSlideIn').click()">
+            <div style="font-size:2rem">🖼️</div>
+            <p>Click or drag & drop to add slide images</p>
+            <p style="font-size:.7rem;margin-top:4px;color:var(--muted)">JPG, PNG, WebP — recommended 1920×1080 or wider</p>
+          </div>
+          <input type="file" id="heroSlideIn" accept="image/*" multiple style="display:none" onchange="uploadHeroSlides(this.files)"/>
+          <div id="heroSlidesGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-top:14px"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Text Content</div>
+          <div class="field"><label>Eyebrow (small text above title)</label><input type="text" id="h_eyebrow"/></div>
+          <div class="field-row">
+            <div class="field"><label>Title — Line 1</label><input type="text" id="h_title1"/></div>
+            <div class="field"><label>Title — Line 2 (indented)</label><input type="text" id="h_title2"/></div>
+          </div>
+          <div class="field"><label>Subtitle paragraph</label><textarea id="h_subtitle" rows="3"></textarea></div>
+          <div class="field"><label>Location Badge</label><input type="text" id="h_location"/></div>
+          <div class="field-row">
+            <div class="field"><label>Primary Button Text</label><input type="text" id="h_btn1"/></div>
+            <div class="field"><label>Secondary Button Text</label><input type="text" id="h_btn2"/></div>
+          </div>
+          <div class="save-bar"><span class="save-status" id="ss-hero"></span><button class="btn btn-gold" onclick="save('hero')">Save Changes</button></div>
+        </div>
+      </div>
+
+      <!-- STATS -->
+      <div class="panel" id="panel-stats">
+        <div class="panel-header"><h2>Statistics <em>Band</em></h2><div class="pdivider"></div></div>
+        <div class="card">
+          <div id="stats-list"></div>
+          <button class="btn btn-outline btn-sm" style="margin-top:10px" onclick="addStat()">+ Add Stat</button>
+          <div class="save-bar"><span class="save-status" id="ss-stats"></span><button class="btn btn-gold" onclick="save('stats')">Save Changes</button></div>
+        </div>
+      </div>
+
+      <!-- ABOUT -->
+      <div class="panel" id="panel-about">
+        <div class="panel-header"><h2>About / <em>Founder</em></h2><div class="pdivider"></div></div>
+        <div class="card">
+          <div class="field-row">
+            <div class="field"><label>Full Name</label><input type="text" id="a_name"/></div>
+            <div class="field"><label>Role / Title</label><input type="text" id="a_role"/></div>
+          </div>
+          <div class="field"><label>Bio Paragraph 1</label><textarea id="a_bio1" rows="3"></textarea></div>
+          <div class="field"><label>Bio Paragraph 2</label><textarea id="a_bio2" rows="3"></textarea></div>
+          <div class="field"><label>Pull Quote</label><textarea id="a_quote" rows="2"></textarea></div>
+          <div class="field"><label>Bio Paragraph 3</label><textarea id="a_bio3" rows="3"></textarea></div>
+          <div class="field"><label>Credentials <span style="color:var(--muted);font-weight:300">(press Enter to add)</span></label>
+            <div class="tag-editor" id="a_creds_tags"></div>
+          </div>
+          <div class="field"><label>Profile Photo</label>
+            <div class="photo-row">
+              <div id="a_photo_prev" class="photo-ph">RM</div>
+              <div>
+                <button class="btn btn-outline btn-sm" onclick="pickPhoto('a_photo_val','a_photo_prev','a_photo_url')">Choose from Media Library</button>
+                <p class="hint">First upload the image in the Media Library tab.</p>
+                <div class="url-hint" id="a_photo_url"></div>
+                <input type="hidden" id="a_photo_val"/>
+              </div>
+            </div>
+          </div>
+          <div class="save-bar"><span class="save-status" id="ss-about"></span><button class="btn btn-gold" onclick="save('about')">Save Changes</button></div>
+        </div>
+      </div>
+
+      <!-- PRACTICE AREAS -->
+      <div class="panel" id="panel-practice">
+        <div class="panel-header"><h2>Practice <em>Areas</em></h2><div class="pdivider"></div></div>
+        <div id="practice-list"></div>
+        <button class="btn btn-outline btn-sm" style="margin-top:6px" onclick="addPractice()">+ Add Practice Area</button>
+        <div class="save-bar" style="margin-top:18px"><span class="save-status" id="ss-practice"></span><button class="btn btn-gold" onclick="save('practice')">Save All</button></div>
+      </div>
+
+      <!-- TEAM -->
+      <div class="panel" id="panel-team">
+        <div class="panel-header"><h2>Our <em>Team</em></h2><div class="pdivider"></div><p>Upload a photo directly on each member card, or choose from the Media Library.</p></div>
+        <div id="team-list"></div>
+        <button class="btn btn-outline btn-sm" style="margin-top:6px" onclick="addTeam()">+ Add Team Member</button>
+        <div class="save-bar" style="margin-top:18px"><span class="save-status" id="ss-team"></span><button class="btn btn-gold" onclick="save('team')">Save All</button></div>
+      </div>
+
+      <!-- RESULTS -->
+      <div class="panel" id="panel-results">
+        <div class="panel-header"><h2>Notable <em>Results</em></h2><div class="pdivider"></div></div>
+        <div id="results-list"></div>
+        <button class="btn btn-outline btn-sm" style="margin-top:6px" onclick="addResult()">+ Add Result</button>
+        <div class="save-bar" style="margin-top:18px"><span class="save-status" id="ss-results"></span><button class="btn btn-gold" onclick="save('results')">Save All</button></div>
+      </div>
+
+      <!-- WHY -->
+      <div class="panel" id="panel-why">
+        <div class="panel-header"><h2>Why Choose <em>Us</em></h2><div class="pdivider"></div></div>
+        <div id="why-list"></div>
+        <button class="btn btn-outline btn-sm" style="margin-top:6px" onclick="addWhy()">+ Add Point</button>
+        <div class="save-bar" style="margin-top:18px"><span class="save-status" id="ss-why"></span><button class="btn btn-gold" onclick="save('why')">Save All</button></div>
+      </div>
+
+      <!-- AWARDS -->
+      <div class="panel" id="panel-awards">
+        <div class="panel-header"><h2>Awards & <em>Accreditations</em></h2><div class="pdivider"></div></div>
+        <div id="awards-list"></div>
+        <button class="btn btn-outline btn-sm" style="margin-top:6px" onclick="addAward()">+ Add Award</button>
+        <div class="save-bar" style="margin-top:18px"><span class="save-status" id="ss-awards"></span><button class="btn btn-gold" onclick="save('awards')">Save All</button></div>
+      </div>
+
+      <!-- COMMUNITY -->
+      <div class="panel" id="panel-community">
+        <div class="panel-header"><h2>Community <em>Section</em></h2><div class="pdivider"></div></div>
+        <div class="card"><div class="card-title">Intro Text</div>
+          <div class="field"><label>Paragraph 1</label><textarea id="co_p1" rows="3"></textarea></div>
+          <div class="field"><label>Paragraph 2</label><textarea id="co_p2" rows="3"></textarea></div>
+        </div>
+        <div class="card"><div class="card-title">Pillars</div>
+          <div id="co-pillars"></div>
+          <button class="btn btn-outline btn-sm" style="margin-top:6px" onclick="addPillar()">+ Add Pillar</button>
+        </div>
+        <div class="card"><div class="card-title">Community Stats</div>
+          <div id="co-stats"></div>
+          <button class="btn btn-outline btn-sm" style="margin-top:6px" onclick="addCoStat()">+ Add Stat</button>
+        </div>
+        <div class="save-bar"><span class="save-status" id="ss-community"></span><button class="btn btn-gold" onclick="save('community')">Save All</button></div>
+      </div>
+
+      <!-- TESTIMONIALS -->
+      <div class="panel" id="panel-testimonials">
+        <div class="panel-header"><h2>Client <em>Testimonials</em></h2><div class="pdivider"></div></div>
+        <div id="testimonials-list"></div>
+        <button class="btn btn-outline btn-sm" style="margin-top:6px" onclick="addTestimonial()">+ Add Testimonial</button>
+        <div class="save-bar" style="margin-top:18px"><span class="save-status" id="ss-testimonials"></span><button class="btn btn-gold" onclick="save('testimonials')">Save All</button></div>
+      </div>
+
+      <!-- FAQ -->
+      <div class="panel" id="panel-faq">
+        <div class="panel-header"><h2>Frequently Asked <em>Questions</em></h2><div class="pdivider"></div></div>
+        <div id="faq-list"></div>
+        <button class="btn btn-outline btn-sm" style="margin-top:6px" onclick="addFaq()">+ Add Q&A</button>
+        <div class="save-bar" style="margin-top:18px"><span class="save-status" id="ss-faq"></span><button class="btn btn-gold" onclick="save('faq')">Save All</button></div>
+      </div>
+
+      <!-- CONTACT -->
+      <div class="panel" id="panel-contact">
+        <div class="panel-header"><h2>Contact <em>Details</em></h2><div class="pdivider"></div></div>
+        <div class="card">
+          <div class="field"><label>Office Address</label><input type="text" id="c_address"/></div>
+          <div class="field-row">
+            <div class="field"><label>Phone</label><input type="text" id="c_phone"/></div>
+            <div class="field"><label>Email</label><input type="email" id="c_email"/></div>
+          </div>
+          <div class="field"><label>Office Hours</label><textarea id="c_hours" rows="2"></textarea></div>
+          <div class="field-row">
+            <div class="field"><label>P.O. Box</label><input type="text" id="c_pobox"/></div>
+            <div class="field"><label>Google Maps URL</label><input type="url" id="c_map"/></div>
+          </div>
+          <div class="save-bar"><span class="save-status" id="ss-contact"></span><button class="btn btn-gold" onclick="save('contact')">Save Changes</button></div>
+        </div>
+      </div>
+
+      <!-- MEDIA -->
+      <div class="panel" id="panel-media">
+        <div class="panel-header"><h2>Media <em>Library</em></h2><div class="pdivider"></div><p>Upload images to use across the website. After uploading, go to About or Team to assign photos.</p></div>
+        <div class="card">
+          <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileIn').click()">
+            <div style="font-size:2.5rem">📁</div>
+            <p>Click to upload or drag & drop images here</p>
+            <p style="font-size:.72rem;margin-top:4px;color:var(--muted)">JPG, PNG, WebP, GIF — images are stored in your browser</p>
+          </div>
+          <input type="file" id="fileIn" accept="image/*" multiple style="display:none" onchange="uploadFiles(this.files)"/>
+        </div>
+        <div class="card">
+          <div class="card-title">Uploaded Images <span id="img-count" style="font-family:var(--sans);font-size:.8rem;color:var(--muted);margin-left:6px"></span></div>
+          <div class="media-grid" id="mediaGrid"><p style="color:var(--muted);font-size:.85rem">No images uploaded yet.</p></div>
+        </div>
+      </div>
+
+      <!-- ENQUIRIES -->
+      <div class="panel" id="panel-enquiries">
+        <div class="panel-header"><h2>Contact <em>Enquiries</em></h2><div class="pdivider"></div><p>Messages submitted through the website contact form.</p></div>
+        <div class="card">
+          <div style="display:flex;justify-content:flex-end;margin-bottom:14px">
+            <button class="btn btn-danger btn-sm" onclick="clearEnquiries()">Clear All</button>
+          </div>
+          <div id="enquiries-body"></div>
+        </div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div class="panel" id="panel-settings">
+        <div class="panel-header"><h2>Account <em>Settings</em></h2><div class="pdivider"></div></div>
+        <div class="card" style="max-width:460px">
+          <div class="card-title">Change Password</div>
+          <div class="field"><label>Current Password</label><input type="password" id="pw_cur" placeholder="••••••••"/></div>
+          <div class="field"><label>New Password</label><input type="password" id="pw_new" placeholder="At least 6 characters"/></div>
+          <div class="field"><label>Confirm New Password</label><input type="password" id="pw_new2" placeholder="Repeat new password"/></div>
+          <div class="save-bar"><span class="save-status" id="ss-settings"></span><button class="btn btn-gold" onclick="changePw()">Update Password</button></div>
+        </div>
+        <div class="card" style="max-width:460px;margin-top:20px">
+          <div class="card-title">Export / Import Data</div>
+          <p style="color:var(--muted);font-size:.85rem;margin-bottom:16px">Export all your content as a JSON file to back it up or move it to another browser/device.</p>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn btn-outline" onclick="exportData()">⬇ Export All Data</button>
+            <button class="btn btn-outline" onclick="document.getElementById('importIn').click()">⬆ Import Data</button>
+          </div>
+          <input type="file" id="importIn" accept=".json" style="display:none" onchange="importData(this)"/>
+        </div>
+      </div>
+
+    </div><!-- end main -->
+  </div>
+</div>
+
+<!-- MEDIA PICKER MODAL -->
+<div class="modal-bg" id="pickerModal">
+  <div class="modal" style="max-width:700px">
+    <h3>Choose a <em style="font-style:italic;color:var(--gold-light)">Photo</em></h3>
+    <p style="color:var(--muted);font-size:.82rem;margin-bottom:14px">Click an image to select it. Upload new images in the Media Library.</p>
+    <div class="media-grid" id="pickerGrid"></div>
+    <div class="modal-footer"><button class="btn" style="border:1px solid var(--border);color:var(--muted);background:none" onclick="closePicker()">Cancel</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── STORAGE KEYS ──────────────────────────────────────────────────────────
+const KEYS = {
+  auth: 'rm_auth',
+  content: 'rm_content',
+  images: 'rm_images',
+  enquiries: 'rm_enquiries'
+};
+
+// ─── DEFAULT CONTENT ──────────────────────────────────────────────────────
+const DEFAULT = {
+  hero: { eyebrow:'Established Advocates — Machakos, Kenya', title1:'Justice, delivered', title2:'with precision.', subtitle:"Rose Mutua & Advocates is Machakos County's premier law firm — providing bold, strategic legal counsel across corporate, criminal, family, and estate matters.", location:'Machakos Town, Machakos County', btn1:'Book a Consultation', btn2:'Explore Practice Areas' },
+  stats: [{number:'20+',label:'Years of Practice'},{number:'600+',label:'Cases Handled'},{number:'98%',label:'Client Satisfaction'},{number:'4',label:'Practice Areas'},{number:'12+',label:'Legal Professionals'}],
+  about: { name:'Rose Mutua', role:'Founding Partner & Lead Advocate', bio1:"Founded in the heart of Machakos County, Rose Mutua & Advocates has grown into one of the most respected legal practices in the region. Our founding partner, Rose Mutua, brings over two decades of litigation and advisory experience to every matter she touches.", bio2:"We serve individuals, families, entrepreneurs, and corporations with equal dedication — delivering the personalised attention that large firms simply cannot offer, backed by expertise that rivals any practice in the country.", quote:"Every client's matter is a cause worth fighting for — with strategy, heart, and unwavering resolve.", bio3:'From landmark High Court victories to complex corporate structures, our track record speaks before we do. We are proud to call Machakos County home.', credentials:['LL.B — University of Nairobi','CPS (Kenya)','LSK Member','20+ Years Experience','High Court Advocate'], photo:'' },
+  practice: [
+    {num:'01',name:'Corporate & Business Law',desc:'From company incorporation and mergers to commercial contracts and regulatory compliance — we protect your business interests at every stage of growth.',services:['Company Formation','Mergers & Acquisitions','Commercial Contracts','Shareholder Disputes','Regulatory Compliance']},
+    {num:'02',name:'Criminal Defense',desc:'Aggressive, principled defense in criminal proceedings. We safeguard your rights from investigation through trial and appeal.',services:['Pre-trial Defense','Bail Applications','Trial Representation','Appeals','White-Collar Crime']},
+    {num:'03',name:'Family & Matrimonial Law',desc:"Sensitive, discreet counsel on divorce, child custody, adoption, and spousal rights. We navigate family matters with firmness and compassion.",services:['Divorce & Separation','Child Custody','Adoption','Matrimonial Property','Spousal Maintenance']},
+    {num:'04',name:'Estate & Succession',desc:'Comprehensive estate planning, wills, probate, and inheritance dispute resolution. We ensure your legacy is protected.',services:['Will Drafting','Probate Administration','Trust Formation','Succession Disputes','Estate Planning']}
+  ],
+  team: [
+    {initials:'RM',name:'Rose Mutua',role:'Founding Partner & Lead Advocate',bio:'Over 20 years of litigation experience across criminal, corporate, and family law. High Court advocate and CPS, based in Machakos.',specialties:['Criminal','Corporate','Family'],photo:''},
+    {initials:'JM',name:'James Mutinda',role:'Senior Associate — Corporate Law',bio:'Specialist in mergers, acquisitions, and commercial contracts. Extensive experience advising SMEs across Eastern Kenya.',specialties:['Corporate','M&A','Contracts'],photo:''},
+    {initials:'AW',name:'Amina Wambua',role:'Associate — Family & Succession',bio:'Skilled in estate planning, probate administration, and matrimonial disputes across Machakos County.',specialties:['Family','Estate','Succession'],photo:''}
+  ],
+  results: [
+    {outcome:'Charges Dismissed',type:'Criminal Defense — Machakos High Court',desc:'Successfully secured the full dismissal of serious fraud charges against a Machakos businessman through rigorous evidence challenge.'},
+    {outcome:'KES 45M Recovered',type:'Corporate Dispute — Commercial Court',desc:'Obtained a KES 45 million judgment in a breach-of-contract dispute against a major regional supplier, including full legal costs.'},
+    {outcome:'Estate Secured',type:'Succession — Family Division',desc:"Successfully defended a client's rightful inheritance against a contested claim involving multiple parties."},
+    {outcome:'Custody Granted',type:"Family Law — Children's Court",desc:'Secured primary custody for a mother in a highly contested matter, prioritising the best interests of the children.'},
+    {outcome:'KES 120M Acquisition',type:'Corporate — M&A Advisory',desc:'Advised on the legal structuring and due diligence of a multi-entity business acquisition.'},
+    {outcome:'Sentence Reduced',type:'Criminal Appeal — Court of Appeal',desc:'Successfully appealed a custodial sentence on grounds of mitigating circumstances and procedural errors.'}
+  ],
+  why: [
+    {icon:'⚖️',title:'Proven Track Record',text:"Decades of courtroom victories and successful negotiations across Kenya's judicial system."},
+    {icon:'🔒',title:'Absolute Discretion',text:'Every matter is handled with the highest level of confidentiality. Your privacy is our professional obligation.'},
+    {icon:'🎯',title:'Tailored Strategy',text:'No two cases are the same. We craft bespoke legal strategies built around your specific circumstances.'},
+    {icon:'🤝',title:'Direct Advocate Access',text:'You will always have direct access to your advocate — not a junior clerk.'},
+    {icon:'📋',title:'Full-Spectrum Counsel',text:'From preventive advisory to aggressive litigation, under one roof in Machakos.'},
+    {icon:'🌍',title:'Deep Local Roots',text:'Born and built in Machakos County. We know the local courts, landscape, and communities we serve.'}
+  ],
+  awards: [
+    {icon:'🏆',title:'Advocate of the Year',org:'Law Society of Kenya',year:'2022'},
+    {icon:'⭐',title:'Best Law Firm — Machakos County',org:'Kenya Legal Awards',year:'2021 & 2023'},
+    {icon:'🎖️',title:'Excellence in Criminal Defense',org:'East Africa Legal Forum',year:'2020'},
+    {icon:'📜',title:'LSK Accredited Practice',org:'Law Society of Kenya',year:'Ongoing'}
+  ],
+  community: {
+    p1:'Rose Mutua & Advocates believes that access to justice is a right, not a privilege. We are deeply committed to the communities of Machakos County.',
+    p2:'Through annual legal aid clinics, school outreach, and partnerships with local organisations, we work to ensure the most vulnerable members of our community have a voice in the legal system.',
+    pillars:[{icon:'🏫',title:'Legal Aid Clinics',desc:'Free quarterly legal advice sessions across Machakos County.'},{icon:'📚',title:'School Outreach',desc:'Annual talks at Machakos secondary schools on rights and careers in law.'},{icon:'🌱',title:'Pro Bono Representation',desc:'We dedicate capacity each year to representing deserving clients who cannot afford fees.'}],
+    stats:[{num:'300+',label:'Pro Bono Clients'},{num:'12',label:'Annual Clinics'},{num:'800+',label:'Students Reached'},{num:'10+',label:'Community Partners'}]
+  },
+  testimonials: [
+    {stars:5,text:"Rose Mutua handled our company's merger with exceptional precision. Her assertive negotiation style saved us millions.",name:'James K. Waweru',case:'Corporate & Business Law'},
+    {stars:5,text:'During the most difficult period of my life, Rose guided my family through a complex succession dispute with composure and command.',name:'Amina O. Hassan',case:'Estate & Succession'},
+    {stars:5,text:'I was facing serious criminal charges and feared the worst. Her team was relentless, and the charges were dismissed entirely.',name:'D. Otieno',case:'Criminal Defense'},
+    {stars:5,text:"As a Machakos business owner, I needed a lawyer who understood the local landscape. Outstanding service.",name:'Peter M. Kioko',case:'Corporate & Property Law'},
+    {stars:5,text:'The team handled my divorce with sensitivity and strength. I cannot recommend them highly enough.',name:'F. Mwende',case:'Family & Matrimonial Law'},
+    {stars:5,text:'I attended their free legal clinic and got more useful advice in one hour than I had received elsewhere in months.',name:'Community Member',case:'Legal Aid Clinic, Machakos'}
+  ],
+  faq: [
+    {q:'Is the first consultation really free?',a:'Yes. We offer every prospective client a free, no-obligation initial consultation. No cost, no pressure.'},
+    {q:'Where is your office located?',a:'We are based in Machakos Town, Machakos County. Remote and virtual consultations are also available.'},
+    {q:'How long will my case take?',a:'Timelines vary by matter. We give you a realistic assessment at consultation — no false timelines.'},
+    {q:'What are your fees?',a:'Fees are communicated upfront before you commit. Fixed-fee and hourly arrangements available, plus pro bono for eligible clients.'},
+    {q:'Can I switch lawyers mid-case?',a:'Yes. We handle such transitions carefully, reviewing your case before proceeding to ensure continuity.'},
+    {q:'Do you handle cases outside Machakos?',a:'Yes. We regularly appear before the High Court and Court of Appeal in Nairobi.'},
+    {q:'Is my information confidential?',a:'Absolutely. Attorney-client privilege is sacred. Everything you share is held in strict confidence.'},
+    {q:'Do you offer payment plans?',a:'In appropriate circumstances we discuss structured payment arrangements to ensure accessible representation.'}
+  ],
+  contact: { address:'Machakos Town, Machakos County, Kenya', phone:'+254 700 000 000', email:'info@rosemutua.co.ke', hours:'Monday – Friday: 8:00 AM – 6:00 PM\nSaturday: 9:00 AM – 1:00 PM', pobox:'P.O. Box 1234 – 90100, Machakos', map:'https://maps.google.com/?q=Machakos+Town+Kenya' }
+};
+
+// ─── DATA LAYER ────────────────────────────────────────────────────────────
+function getData(key) {
+  const raw = localStorage.getItem(KEYS.content);
+  const all = raw ? JSON.parse(raw) : {};
+  return all[key] !== undefined ? all[key] : (DEFAULT[key] ? JSON.parse(JSON.stringify(DEFAULT[key])) : null);
+}
+function setData(key, val) {
+  const raw = localStorage.getItem(KEYS.content);
+  const all = raw ? JSON.parse(raw) : {};
+  all[key] = val;
+  localStorage.setItem(KEYS.content, JSON.stringify(all));
+}
+function getAllData() {
+  const raw = localStorage.getItem(KEYS.content);
+  const stored = raw ? JSON.parse(raw) : {};
+  const result = {};
+  for (const k of Object.keys(DEFAULT)) result[k] = stored[k] !== undefined ? stored[k] : JSON.parse(JSON.stringify(DEFAULT[k]));
+  return result;
+}
+
+function getImages() { try { return JSON.parse(localStorage.getItem(KEYS.images)||'[]'); } catch{return[];} }
+function saveImages(imgs) { localStorage.setItem(KEYS.images, JSON.stringify(imgs)); }
+function getEnquiries() { try { return JSON.parse(localStorage.getItem(KEYS.enquiries)||'[]'); } catch{return[];} }
+function saveEnquiries(e) { localStorage.setItem(KEYS.enquiries, JSON.stringify(e)); }
+
+// ─── AUTH ──────────────────────────────────────────────────────────────────
+function getAuth() { try { return JSON.parse(localStorage.getItem(KEYS.auth)||'{"user":"admin","hash":"admin123"}'); } catch{return{user:'admin',hash:'admin123'};} }
+function doLogin() {
+  const u = document.getElementById('lUser').value.trim();
+  const p = document.getElementById('lPass').value;
+  const auth = getAuth();
+  const err = document.getElementById('lErr');
+  if (u === auth.user && p === auth.hash) {
+    sessionStorage.setItem('rm_session','1');
+    err.style.display='none';
+    showApp();
+  } else {
+    err.textContent = 'Incorrect username or password.';
+    err.style.display = 'block';
+  }
+}
+document.getElementById('lPass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+function logout() { sessionStorage.removeItem('rm_session'); document.getElementById('loginScreen').style.display='flex'; document.getElementById('app').classList.remove('visible'); }
+function showApp() {
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('app').classList.add('visible');
+  loadAll();
+  renderDash();
+}
+window.addEventListener('load', () => { if(sessionStorage.getItem('rm_session')==='1') showApp(); });
+
+// ─── TOAST ─────────────────────────────────────────────────────────────────
+function toast(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = `toast ${type} show`;
+  setTimeout(()=>t.classList.remove('show'),3200);
+}
+
+// ─── PANEL SWITCHING ──────────────────────────────────────────────────────
+function sw(btn) {
+  document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  const p = document.getElementById('panel-'+btn.dataset.p);
+  if(p) p.classList.add('active');
+  if(btn.dataset.p==='media') renderMedia();
+  if(btn.dataset.p==='enquiries') renderEnquiries();
+  if(btn.dataset.p==='dashboard') renderDash();
+}
+
+// ─── SAVE ─────────────────────────────────────────────────────────────────
+function setStatus(id, msg, cls) {
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.textContent = msg; el.className = 'save-status '+cls;
+  if(cls==='ok') setTimeout(()=>{el.textContent='';el.className='save-status';},3000);
+}
+function save(key) {
+  setData(key, collect(key));
+  setStatus('ss-'+key,'✓ Saved','ok');
+  toast(key.charAt(0).toUpperCase()+key.slice(1)+' saved!');
+}
+
+// ─── LOAD ALL ─────────────────────────────────────────────────────────────
+function loadAll() {
+  loadHero(); loadStats(); loadAbout(); loadPractice(); loadTeam();
+  loadResults(); loadWhy(); loadAwards(); loadCommunity();
+  loadTestimonials(); loadFaq(); loadContact();
+}
+
+// ─── HELPERS ──────────────────────────────────────────────────────────────
+const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const gv = id => { const e=document.getElementById(id); return e?e.value:''; };
+const sv = (id,v) => { const e=document.getElementById(id); if(e) e.value=v||''; };
+
+function makeTags(containerId, tags) {
+  const c = document.getElementById(containerId);
+  if(!c) return;
+  c.innerHTML = (tags||[]).map(t=>`<span class="tag">${esc(t)}<span class="tag-x" onclick="this.parentElement.remove()">×</span></span>`).join('') +
+    `<input class="tag-input" type="text" placeholder="Add, press Enter" onkeydown="addTag(event,'${containerId}')"/>`;
+}
+function addTag(e,cid) {
+  if(e.key!=='Enter') return;
+  e.preventDefault();
+  const v=e.target.value.trim(); if(!v) return;
+  const sp=document.createElement('span'); sp.className='tag';
+  sp.innerHTML=`${esc(v)}<span class="tag-x" onclick="this.parentElement.remove()">×</span>`;
+  e.target.parentElement.insertBefore(sp,e.target);
+  e.target.value='';
+}
+function getTags(cid) {
+  const c=document.getElementById(cid); if(!c) return [];
+  return Array.from(c.querySelectorAll('.tag')).map(t=>t.childNodes[0].textContent.trim());
+}
+
+// ─── HERO ─────────────────────────────────────────────────────────────────
+function loadHero() {
+  const h=getData('hero')||{};
+  sv('h_eyebrow',h.eyebrow); sv('h_title1',h.title1); sv('h_title2',h.title2);
+  sv('h_subtitle',h.subtitle); sv('h_location',h.location);
+  sv('h_btn1',h.btn1); sv('h_btn2',h.btn2);
+  renderHeroSlides(h.slides||[]);
+}
+function renderHeroSlides(slides) {
+  const grid=document.getElementById('heroSlidesGrid');
+  if(!grid) return;
+  if(!slides.length){ grid.innerHTML='<p style="color:var(--muted);font-size:.82rem">No slides yet — upload images above.</p>'; return; }
+  grid.innerHTML=slides.map((s,i)=>`
+    <div style="position:relative;aspect-ratio:16/9;background:var(--bg);border:1px solid var(--border);overflow:hidden;border-radius:2px">
+      <img src="${s.data}" style="width:100%;height:100%;object-fit:cover"/>
+      <div style="position:absolute;inset:0;background:rgba(0,0,0,.5);opacity:0;transition:opacity .2s;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px" onmouseenter="this.style.opacity=1" onmouseleave="this.style.opacity=0">
+        <button class="btn btn-danger btn-sm" onclick="removeHeroSlide(${i})">Remove</button>
+        ${i>0?`<button class="btn btn-sm" style="border:1px solid rgba(255,255,255,.3);color:#fff;background:none;font-size:.62rem" onclick="moveHeroSlide(${i},-1)">Move Left</button>`:''}
+      </div>
+      <div style="position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.6);padding:4px 8px;font-size:.6rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.name}</div>
+    </div>`).join('');
+}
+function uploadHeroSlides(files) {
+  const h=getData('hero')||{};
+  const slides=h.slides||[];
+  let count=0;
+  Array.from(files).forEach(file=>{
+    if(file.size>10*1024*1024){toast('File too large: '+file.name,'err');return;}
+    const r=new FileReader();
+    r.onload=e=>{
+      slides.push({id:'slide_'+Date.now()+'_'+Math.random().toString(36).substr(2,4),data:e.target.result,name:file.name});
+      h.slides=slides;
+      setData('hero',{...getData('hero'),slides});
+      renderHeroSlides(slides);
+      toast('Slide added: '+file.name);
+    };
+    r.readAsDataURL(file);
+  });
+  document.getElementById('heroSlideIn').value='';
+}
+function removeHeroSlide(i) {
+  const h=getData('hero')||{};
+  const slides=h.slides||[];
+  slides.splice(i,1);
+  setData('hero',{...h,slides});
+  renderHeroSlides(slides);
+}
+function moveHeroSlide(i,dir) {
+  const h=getData('hero')||{};
+  const slides=h.slides||[];
+  const j=i+dir;
+  if(j<0||j>=slides.length) return;
+  [slides[i],slides[j]]=[slides[j],slides[i]];
+  setData('hero',{...h,slides});
+  renderHeroSlides(slides);
+}
+// Hero upload zone drag & drop
+window.addEventListener('load',()=>{
+  const hz=document.getElementById('heroUploadZone');
+  if(!hz) return;
+  hz.addEventListener('dragover',e=>{e.preventDefault();hz.classList.add('over')});
+  hz.addEventListener('dragleave',()=>hz.classList.remove('over'));
+  hz.addEventListener('drop',e=>{e.preventDefault();hz.classList.remove('over');uploadHeroSlides(e.dataTransfer.files)});
+});
+
+function collect(key) {
+  if(key==='hero'){
+    const existing=getData('hero')||{};
+    return {eyebrow:gv('h_eyebrow'),title1:gv('h_title1'),title2:gv('h_title2'),subtitle:gv('h_subtitle'),location:gv('h_location'),btn1:gv('h_btn1'),btn2:gv('h_btn2'),slides:existing.slides||[]};
+  }
+  if(key==='stats') return collectList('stats-list',['number','label']);
+  if(key==='about') return {name:gv('a_name'),role:gv('a_role'),bio1:gv('a_bio1'),bio2:gv('a_bio2'),quote:gv('a_quote'),bio3:gv('a_bio3'),credentials:getTags('a_creds_tags'),photo:gv('a_photo_val')};
+  if(key==='practice') return collectPracticeData();
+  if(key==='team') return collectTeamData();
+  if(key==='results') return collectList('results-list',['outcome','type','desc']);
+  if(key==='why') return collectList('why-list',['icon','title','text']);
+  if(key==='awards') return collectList('awards-list',['icon','title','org','year']);
+  if(key==='community') return {p1:gv('co_p1'),p2:gv('co_p2'),pillars:collectList('co-pillars',['icon','title','desc']),stats:collectList('co-stats',['num','label'])};
+  if(key==='testimonials') return collectTestimonialsData();
+  if(key==='faq') return collectFaqData();
+  if(key==='contact') return {address:gv('c_address'),phone:gv('c_phone'),email:gv('c_email'),hours:gv('c_hours'),pobox:gv('c_pobox'),map:gv('c_map')};
+}
+function collectList(lid, fields) {
+  return Array.from(document.querySelectorAll(`#${lid} .array-item`)).map(el=>{
+    const o={}; fields.forEach(f=>{const i=el.querySelector(`[data-f="${f}"]`);if(i)o[f]=i.value;}); return o;
+  });
+}
+
+// ─── STATS ────────────────────────────────────────────────────────────────
+function loadStats() {
+  const items=getData('stats')||[];
+  document.getElementById('stats-list').innerHTML = items.map((s,i)=>`
+    <div class="array-item"><div class="array-item-head"><span class="array-item-lbl">Stat #${i+1}</span><button class="btn btn-danger" onclick="this.closest('.array-item').remove()">Remove</button></div>
+    <div class="field-row"><div class="field"><label>Number</label><input type="text" data-f="number" value="${esc(s.number)}"/></div><div class="field"><label>Label</label><input type="text" data-f="label" value="${esc(s.label)}"/></div></div>
+    </div>`).join('');
+}
+function addStat() {
+  const el=document.createElement('div'); el.className='array-item';
+  el.innerHTML=`<div class="array-item-head"><span class="array-item-lbl">New Stat</span><button class="btn btn-danger" onclick="this.closest('.array-item').remove()">Remove</button></div><div class="field-row"><div class="field"><label>Number</label><input type="text" data-f="number" value="0+"/></div><div class="field"><label>Label</label><input type="text" data-f="label" value="New Stat"/></div></div>`;
+  document.getElementById('stats-list').appendChild(el);
+}
+
+// ─── ABOUT ────────────────────────────────────────────────────────────────
+function loadAbout() {
+  const a=getData('about')||{};
+  sv('a_name',a.name); sv('a_role',a.role); sv('a_bio1',a.bio1);
+  sv('a_bio2',a.bio2); sv('a_quote',a.quote); sv('a_bio3',a.bio3);
+  sv('a_photo_val',a.photo||'');
+  makeTags('a_creds_tags',a.credentials||[]);
+  const prev=document.getElementById('a_photo_prev');
+  if(a.photo){prev.innerHTML=`<img class="photo-thumb" src="${esc(a.photo)}"/>`; prev.className=''}
+  else{prev.textContent=(a.name||'').split(' ').map(w=>w[0]).join(''); prev.className='photo-ph';}
+  if(a.photo) document.getElementById('a_photo_url').textContent=a.photo;
+}
+
+// ─── PRACTICE ─────────────────────────────────────────────────────────────
+function loadPractice() {
+  const items=getData('practice')||[];
+  document.getElementById('practice-list').innerHTML = items.map((p,i)=>makePracticeHTML(p,i)).join('');
+}
+function makePracticeHTML(p,i) {
+  return `<div class="card array-item" style="margin-bottom:14px">
+    <div class="array-item-head"><span class="array-item-lbl">Practice Area #${i+1}</span><button class="btn btn-danger" onclick="this.closest('.array-item').remove()">Remove</button></div>
+    <div class="field-row"><div class="field"><label>Number (e.g. 01)</label><input type="text" data-f="num" value="${esc(p.num)}"/></div><div class="field"><label>Name</label><input type="text" data-f="name" value="${esc(p.name)}"/></div></div>
+    <div class="field"><label>Description</label><textarea data-f="desc" rows="3">${esc(p.desc)}</textarea></div>
+    <div class="field"><label>Services <span style="color:var(--muted);font-weight:300">(Enter to add)</span></label>
+    <div class="tag-editor" id="pt-${i}">${(p.services||[]).map(s=>`<span class="tag">${esc(s)}<span class="tag-x" onclick="this.parentElement.remove()">×</span></span>`).join('')}<input class="tag-input" type="text" placeholder="Add service..." onkeydown="addTag(event,'pt-${i}')"/></div></div>
+  </div>`;
+}
+function collectPracticeData() {
+  return Array.from(document.querySelectorAll('#practice-list .array-item')).map((el,i)=>({
+    num:el.querySelector('[data-f="num"]').value,
+    name:el.querySelector('[data-f="name"]').value,
+    desc:el.querySelector('[data-f="desc"]').value,
+    services:getTags('pt-'+i)
+  }));
+}
+function addPractice() {
+  const list=document.getElementById('practice-list');
+  const i=list.querySelectorAll('.array-item').length;
+  const tmp=document.createElement('div'); tmp.innerHTML=makePracticeHTML({num:`0${i+1}`,name:'New Practice Area',desc:'',services:[]},i);
+  list.appendChild(tmp.firstElementChild);
+}
+
+// ─── TEAM ─────────────────────────────────────────────────────────────────
+function loadTeam() {
+  const items=getData('team')||[];
+  document.getElementById('team-list').innerHTML = items.map((m,i)=>makeTeamHTML(m,i)).join('');
+}
+function resolveImgAdmin(val) {
+  if(!val) return '';
+  if(val.startsWith('data:')) return val;
+  const imgs=getImages(); const img=imgs.find(i=>i.id===val); return img?img.data:'';
+}
+function makeTeamHTML(m,i) {
+  const src=resolveImgAdmin(m.photo);
+  const photoHtml = src
+    ? `<img src="${src}" style="width:100%;height:100%;object-fit:cover;display:block"/>`
+    : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:3rem;color:rgba(201,168,76,.3)">${esc(m.initials||'?')}</div>`;
+  return `<div class="card array-item" style="margin-bottom:14px">
+    <div class="array-item-head"><span class="array-item-lbl">Team Member #${i+1}</span><button class="btn btn-danger" onclick="this.closest('.array-item').remove()">Remove</button></div>
+    <div style="display:grid;grid-template-columns:160px 1fr;gap:24px;align-items:start">
+      <div>
+        <div id="tph-wrap-${i}" style="width:160px;height:200px;background:var(--bg);border:1px solid var(--border);overflow:hidden;position:relative;margin-bottom:10px">${photoHtml}</div>
+        <button class="btn btn-gold btn-sm" style="width:100%;justify-content:center;margin-bottom:6px" onclick="document.getElementById('tfile_${i}').click()">📷 Upload Photo</button>
+        <input type="file" id="tfile_${i}" accept="image/*" style="display:none" onchange="uploadTeamPhoto(this,${i})"/>
+        <button class="btn btn-outline btn-sm" style="width:100%;justify-content:center" onclick="pickPhoto('t_photo_${i}','tph-wrap-${i}','t_photo_url_${i}')">🖼️ From Library</button>
+        <div class="url-hint" id="t_photo_url_${i}" style="margin-top:6px;font-size:.65rem">${m.photo?'Photo set':'No photo'}</div>
+        <input type="hidden" id="t_photo_${i}" value="${esc(m.photo||'')}"/>
+      </div>
+      <div>
+        <div class="field-row"><div class="field"><label>Full Name</label><input type="text" data-f="name" value="${esc(m.name)}"/></div><div class="field"><label>Initials</label><input type="text" data-f="initials" value="${esc(m.initials)}"/></div></div>
+        <div class="field"><label>Role / Title</label><input type="text" data-f="role" value="${esc(m.role)}"/></div>
+        <div class="field"><label>Bio</label><textarea data-f="bio" rows="3">${esc(m.bio)}</textarea></div>
+        <div class="field"><label>Specialties <span style="color:var(--muted);font-weight:300">(Enter to add)</span></label>
+        <div class="tag-editor" id="tt-${i}">${(m.specialties||[]).map(s=>`<span class="tag">${esc(s)}<span class="tag-x" onclick="this.parentElement.remove()">×</span></span>`).join('')}<input class="tag-input" type="text" placeholder="Add..." onkeydown="addTag(event,'tt-${i}')"/></div></div>
+      </div>
+    </div>
+  </div>`;
+}
+function uploadTeamPhoto(input, i) {
+  const file=input.files[0]; if(!file) return;
+  if(file.size>8*1024*1024){toast('File too large (max 8MB)','err');return;}
+  const r=new FileReader();
+  r.onload=e=>{
+    const data=e.target.result;
+    // Save to media library too
+    const imgs=getImages();
+    const id='img_'+Date.now()+'_'+Math.random().toString(36).substr(2,5);
+    imgs.push({id,name:file.name,data,section:'team'});
+    saveImages(imgs);
+    // Set on this member
+    const inp=document.getElementById(`t_photo_${i}`);
+    if(inp) inp.value=id;
+    const wrap=document.getElementById(`tph-wrap-${i}`);
+    if(wrap) wrap.innerHTML=`<img src="${data}" style="width:100%;height:100%;object-fit:cover;display:block"/>`;
+    const url=document.getElementById(`t_photo_url_${i}`);
+    if(url) url.textContent='Photo set: '+file.name;
+    toast('Photo uploaded: '+file.name);
+  };
+  r.readAsDataURL(file);
+  input.value='';
+}
+function collectTeamData() {
+  return Array.from(document.querySelectorAll('#team-list .array-item')).map((el,i)=>({
+    name:el.querySelector('[data-f="name"]').value,
+    initials:el.querySelector('[data-f="initials"]').value,
+    role:el.querySelector('[data-f="role"]').value,
+    bio:el.querySelector('[data-f="bio"]').value,
+    specialties:getTags('tt-'+i),
+    photo:document.getElementById(`t_photo_${i}`)?.value||''
+  }));
+}
+function addTeam() {
+  const list=document.getElementById('team-list');
+  const i=list.querySelectorAll('.array-item').length;
+  const tmp=document.createElement('div');
+  tmp.innerHTML=makeTeamHTML({initials:'?',name:'New Member',role:'',bio:'',specialties:[],photo:''},i);
+  list.appendChild(tmp.firstElementChild);
+}
+
+// ─── RESULTS ──────────────────────────────────────────────────────────────
+function loadResults() {
+  const items=getData('results')||[];
+  document.getElementById('results-list').innerHTML = items.map((r,i)=>`
+    <div class="card array-item" style="margin-bottom:14px">
+      <div class="array-item-head"><span class="array-item-lbl">Result #${i+1}</span><button class="btn btn-danger" onclick="this.closest('.array-item').remove()">Remove</button></div>
+      <div class="field-row"><div class="field"><label>Outcome</label><input type="text" data-f="outcome" value="${esc(r.outcome)}"/></div><div class="field"><label>Case Type</label><input type="text" data-f="type" value="${esc(r.type)}"/></div></div>
+      <div class="field"><label>Description</label><textarea data-f="desc" rows="2">${esc(r.desc)}</textarea></div>
+    </div>`).join('');
+}
+function addResult() {
+  const el=document.createElement('div'); el.className='card array-item'; el.style.marginBottom='14px';
+  el.innerHTML=`<div class="array-item-head"><span class="array-item-lbl">New Result</span><button class="btn btn-danger" onclick="this.closest('.array-item').remove()">Remove</button></div><div class="field-row"><div class="field"><label>Outcome</label><input type="text" data-f="outcome" value=""/></div><div class="field"><label>Case Type</label><input type="text" data-f="type" value=""/></div></div><div class="field"><label>Description</label><textarea data-f="desc" rows="2"></textarea></div>`;
+  document.getElementById('results-list').appendChild(el);
+}
+
+// ─── WHY ──────────────────────────────────────────────────────────────────
+function loadWhy() {
+  const items=getData('why')||[];
+  document.getElementById('why-list').innerHTML = items.map((w,i)=>`
+    <div class="array-item"><div class="array-item-head"><span class="array-item-lbl">Point #${i+1}</span><button class="btn btn-danger" onclick="this.closest('.array-item').remove()">Remove</button></div>
+    <div class="field-row"><div class="field"><label>Icon (emoji)</label><input type="text" data-f="icon" value="${esc(w.icon)}"/></div><div class="field"><label>Title</label><input type="text" data-f="title" value="${esc(w.title)}"/></div></div>
+    <div class="field"><label>Description</label><textarea data-f="text" rows="2">${esc(w.text)}</textarea></div></div>`).join('');
+}
+function addWhy() {
+  const el=document.createElement('div'); el.className='array-item';
+  el.innerHTML=`<div class="array-item-head"><span class="array-item-lbl">New Point</span><button class="btn btn-danger" onclick="this.closest('.array-item').remove()">Remove</button></div><div class="field-row"><div class="field"><label>Icon</label><input type="text" data-f="icon" value="⚖️"/></div><div class="field"><label>Title</label><input type="text" data-f="title" value=""/></div></div><div class="field"><label>Description</label><textarea data-f="text" rows="2"></textarea></div>`;
+  document.getElementById('why-list').appendChild(el);
+}
+
+// ─── AWARDS ───────────────────────────────────────────────────────────────
+function loadAwards() {
+  const items=getData('awards')||[];
+  document.getElementById('awards-list').innerHTML = items.map((a,i)=>`
+    <div class="array-item"><div class="array-item-head"><span class="array-item-lbl">Award #${i+1}</span><button class="btn btn-danger" onclick="this.closest('.array-item').remove()">Remove</button></div>
+    <div class="field-row"><div class="field"><label>Icon</label><input type="text" data-f="icon" value="${esc(a.icon)}"/></div><div class="field"><label>Title</label><input type="text" data-f="title" value="${esc(a.title)}"/></div></div>
+    <div class="field-row"><div class="field"><label>Organisation</label><input type="text" data-f="org" value="${esc(a.org)}"/></div><div class="field"><label>Year</label><input type="text" data-f="year" value="${esc(a.year)}"/></div></div></div>`).join('');
+}
+function addAward() {
+  const el=document.createElement('div'); el.className='array-item';
+  el.innerHTML=`<div class="array-item-head"><span class="array-item-lbl">New Award</span><button class="btn btn-danger" onclick="this.closest('.array-item').remove()">Remove</button></div><div class="field-row"><div class="field"><label>Icon</label><input type="text" data-f="icon" value="🏆"/></div><div class="field"><label>Title</label><input type="text" data-f="title" value=""/></div></div><div class="field-row"><div class="field"><label>Organisation</label><input type="text" data-f="org" value=""/></div><div class="field"><label>Year</label><input type="text" data-f="year" value=""/></div></div>`;
+  document.getElementById('awards-list').appendChild(el);
+}
+
+// ─── COMMUNITY ────────────────────────────────────────────────────────────
+function loadCommunity() {
+  const c=getData('community')||{};
+  sv('co_p1',c.p1); sv('co_p2',c.p2);
+  document.getElementById('co-pillars').innerHTML=(c.pillars||[]).map((p,i)=>`
+    <div class="array-item"><div class="array-item-head"><span class="array-item-lbl">Pillar #${i+1}</span><button class="btn btn-danger" onclick="this.closest('.array-item').remove()">Remove</button></div>
+    <div class="field-row"><div class="field"><label>Icon</label><input type="text" data-f="icon" value="${esc(p.icon)}"/></div><div class="field"><label>Title</label><input type="text" data-f="title" value="${esc(p.title)}"/></div></div>
+    <div class="field"><label>Description</label><textarea data-f="desc" rows="2">${esc(p.desc)}</textarea></div></div>`).join('');
+  document.getElementById('co-stats').innerHTML=(c.stats||[]).map((s,i)=>`
+    <div class="array-item"><div class="array-item-head"><span class="array-item-lbl">Stat #${i+1}</span><button class="btn btn-danger" onclick="this.closest('.array-item').remove()">Remove</button></div>
+    <div class="field-row"><div class="field"><label>Number</label><input type="text" data-f="num" value="${esc(s.num)}"/></div><div class="field"><label>Label</label><input type="text" data-f="label" value="${esc(s.label)}"/></div></div></div>`).join('');
+}
+function addPillar() { document.getElementById('co-pillars').insertAdjacentHTML('beforeend',`<div class="array-item"><div class="array-item-head"><span class="array-item-lbl">New Pillar</span><button class="btn btn-danger" onclick="this.closest('.array-item').remove()">Remove</button></div><div class="field-row"><div class="field"><label>Icon</label><input type="text" data-f="icon" value="🌱"/></div><div class="field"><label>Title</label><input type="text" data-f="title" value=""/></div></div><div class="field"><label>Description</label><textarea data-f="desc" rows="2"></textarea></div></div>`); }
+function addCoStat() { document.getElementById('co-stats').insertAdjacentHTML('beforeend',`<div class="array-item"><div class="array-item-head"><span class="array-item-lbl">New Stat</span><button class="btn btn-danger" onclick="this.closest('.array-item').remove()">Remove</button></div><div class="field-row"><div class="field"><label>Number</label><input type="text" data-f="num" value="0+"/></div><div class="field"><label>Label</label><input type="text" data-f="label" value=""/></div></div></div>`); }
+
+// ─── TESTIMONIALS ─────────────────────────────────────────────────────────
+function loadTestimonials() {
+  const items=getData('testimonials')||[];
+  document.getElementById('testimonials-list').innerHTML = items.map((t,i)=>`
+    <div class="card array-item" style="margin-bottom:14px">
+      <div class="array-item-head"><span class="array-item-lbl">Testimonial #${i+1}</span><button class="btn btn-danger" onclick="this.closest('.array-item').remove()">Remove</button></div>
+      <div class="field"><label>Testimonial Text</label><textarea data-f="text" rows="3">${esc(t.text)}</textarea></div>
+      <div class="field-row"><div class="field"><label>Client Name</label><input type="text" data-f="name" value="${esc(t.name)}"/></div><div class="field"><label>Case Type</label><input type="text" data-f="case" value="${esc(t.case)}"/></div></div>
+      <div class="field"><label>Stars (1–5)</label><input type="number" data-f="stars" min="1" max="5" value="${t.stars||5}" style="width:70px"/></div>
+    </div>`).join('');
+}
+function collectTestimonialsData() {
+  return Array.from(document.querySelectorAll('#testimonials-list .array-item')).map(el=>({
+    text:el.querySelector('[data-f="text"]').value,
+    name:el.querySelector('[data-f="name"]').value,
+    case:el.querySelector('[data-f="case"]').value,
+    stars:parseInt(el.querySelector('[data-f="stars"]').value)||5
+  }));
+}
+function addTestimonial() {
+  const el=document.createElement('div'); el.className='card array-item'; el.style.marginBottom='14px';
+  el.innerHTML=`<div class="array-item-head"><span class="array-item-lbl">New Testimonial</span><button class="btn btn-danger" onclick="this.closest('.array-item').remove()">Remove</button></div><div class="field"><label>Text</label><textarea data-f="text" rows="3"></textarea></div><div class="field-row"><div class="field"><label>Name</label><input type="text" data-f="name" value=""/></div><div class="field"><label>Case Type</label><input type="text" data-f="case" value=""/></div></div><div class="field"><label>Stars</label><input type="number" data-f="stars" min="1" max="5" value="5" style="width:70px"/></div>`;
+  document.getElementById('testimonials-list').appendChild(el);
+}
+
+// ─── FAQ ──────────────────────────────────────────────────────────────────
+function loadFaq() {
+  const items=getData('faq')||[];
+  document.getElementById('faq-list').innerHTML = items.map((f,i)=>`
+    <div class="card array-item" style="margin-bottom:14px">
+      <div class="array-item-head"><span class="array-item-lbl">Q&A #${i+1}</span><button class="btn btn-danger" onclick="this.closest('.array-item').remove()">Remove</button></div>
+      <div class="field"><label>Question</label><input type="text" data-f="q" value="${esc(f.q)}"/></div>
+      <div class="field"><label>Answer</label><textarea data-f="a" rows="3">${esc(f.a)}</textarea></div>
+    </div>`).join('');
+}
+function collectFaqData() {
+  return Array.from(document.querySelectorAll('#faq-list .array-item')).map(el=>({
+    q:el.querySelector('[data-f="q"]').value,
+    a:el.querySelector('[data-f="a"]').value
+  }));
+}
+function addFaq() {
+  const el=document.createElement('div'); el.className='card array-item'; el.style.marginBottom='14px';
+  el.innerHTML=`<div class="array-item-head"><span class="array-item-lbl">New Q&A</span><button class="btn btn-danger" onclick="this.closest('.array-item').remove()">Remove</button></div><div class="field"><label>Question</label><input type="text" data-f="q" value=""/></div><div class="field"><label>Answer</label><textarea data-f="a" rows="3"></textarea></div>`;
+  document.getElementById('faq-list').appendChild(el);
+}
+
+// ─── CONTACT ──────────────────────────────────────────────────────────────
+function loadContact() {
+  const c=getData('contact')||{};
+  sv('c_address',c.address); sv('c_phone',c.phone); sv('c_email',c.email);
+  sv('c_hours',c.hours); sv('c_pobox',c.pobox); sv('c_map',c.map);
+}
+
+// ─── MEDIA LIBRARY (base64 in localStorage) ───────────────────────────────
+function renderMedia() {
+  const imgs=getImages();
+  document.getElementById('img-count').textContent=`(${imgs.length})`;
+  document.getElementById('d-images').textContent=imgs.length;
+  const grid=document.getElementById('mediaGrid');
+  if(!imgs.length){ grid.innerHTML='<p style="color:var(--muted);font-size:.85rem">No images uploaded yet.</p>'; return; }
+  grid.innerHTML=imgs.map(img=>`
+    <div class="media-item">
+      <img src="${img.data}" alt="${esc(img.name)}"/>
+      <div class="media-overlay">
+        <button class="btn btn-sm btn-gold" onclick="copyImgUrl('${img.id}')">Copy URL</button>
+        <button class="btn btn-sm btn-danger" onclick="delImg('${img.id}')">Delete</button>
+      </div>
+      <div class="media-name">${esc(img.name)}</div>
+    </div>`).join('');
+}
+function uploadFiles(files) {
+  Array.from(files).forEach(file=>{
+    if(file.size > 8*1024*1024){ toast('File too large (max 8MB)','err'); return; }
+    const reader=new FileReader();
+    reader.onload=e=>{
+      const imgs=getImages();
+      const id='img_'+Date.now()+'_'+Math.random().toString(36).substr(2,5);
+      imgs.push({id,name:file.name,data:e.target.result,section:'general'});
+      saveImages(imgs);
+      toast('Uploaded: '+file.name);
+      renderMedia();
+      renderDash();
+    };
+    reader.readAsDataURL(file);
+  });
+  document.getElementById('fileIn').value='';
+}
+function delImg(id) {
+  if(!confirm('Delete this image?')) return;
+  saveImages(getImages().filter(i=>i.id!==id));
+  toast('Image deleted'); renderMedia(); renderDash();
+}
+function copyImgUrl(id) {
+  const img=getImages().find(i=>i.id===id);
+  if(!img) return;
+  // Store as a named reference that index.html can resolve
+  navigator.clipboard.writeText(img.id).catch(()=>{});
+  toast('Image ID copied. Paste it in the photo field.');
+}
+
+// Drag & drop
+const uz=document.getElementById('uploadZone');
+uz.addEventListener('dragover',e=>{e.preventDefault();uz.classList.add('over')});
+uz.addEventListener('dragleave',()=>uz.classList.remove('over'));
+uz.addEventListener('drop',e=>{e.preventDefault();uz.classList.remove('over');uploadFiles(e.dataTransfer.files)});
+
+// ─── MEDIA PICKER ─────────────────────────────────────────────────────────
+let pickerTarget=null, pickerPrev=null, pickerUrl=null;
+function pickPhoto(valId, prevId, urlId) {
+  pickerTarget=valId; pickerPrev=prevId; pickerUrl=urlId;
+  const imgs=getImages();
+  const grid=document.getElementById('pickerGrid');
+  grid.innerHTML = imgs.length
+    ? imgs.map(img=>`<div class="media-item" onclick="selectPhoto('${img.id}')"><img src="${img.data}"/><div class="media-name">${esc(img.name)}</div></div>`).join('')
+    : '<p style="color:var(--muted);font-size:.85rem">Upload images in the Media Library first.</p>';
+  document.getElementById('pickerModal').classList.add('open');
+}
+function selectPhoto(id) {
+  const img=getImages().find(i=>i.id===id);
+  if(!img||!pickerTarget) return;
+  document.getElementById(pickerTarget).value=img.id;
+  const prevEl=document.getElementById(pickerPrev);
+  if(prevEl){ prevEl.innerHTML=`<img class="photo-thumb" src="${img.data}"/>`; prevEl.className=''; }
+  const urlEl=document.getElementById(pickerUrl);
+  if(urlEl) urlEl.textContent=img.name;
+  closePicker();
+  toast('Photo selected: '+img.name);
+}
+function closePicker() { document.getElementById('pickerModal').classList.remove('open'); }
+document.getElementById('pickerModal').addEventListener('click',e=>{ if(e.target===e.currentTarget) closePicker(); });
+
+// ─── ENQUIRIES ────────────────────────────────────────────────────────────
+function renderEnquiries() {
+  const enqs=getEnquiries();
+  document.getElementById('d-enquiries').textContent=enqs.length;
+  const body=document.getElementById('enquiries-body');
+  if(!enqs.length){ body.innerHTML='<p style="color:var(--muted)">No enquiries yet.</p>'; return; }
+  body.innerHTML=`<table class="sub-table"><thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Area</th><th>Message</th><th>Date</th><th></th></tr></thead><tbody>
+  ${enqs.map(e=>`<tr><td><strong>${esc(e.firstName)} ${esc(e.lastName)}</strong></td><td>${esc(e.email)}</td><td>${esc(e.phone)}</td><td>${esc(e.practiceArea)}</td><td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(e.message)}">${esc(e.message)}</td><td style="white-space:nowrap;color:var(--muted)">${new Date(e.date).toLocaleDateString()}</td><td><button class="btn btn-danger" onclick="delEnquiry('${e.id}')">Del</button></td></tr>`).join('')}
+  </tbody></table>`;
+}
+function delEnquiry(id) { saveEnquiries(getEnquiries().filter(e=>e.id!==id)); renderEnquiries(); toast('Deleted'); }
+function clearEnquiries() { if(confirm('Delete all enquiries?')){ localStorage.removeItem(KEYS.enquiries); renderEnquiries(); toast('All cleared'); } }
+
+// ─── SETTINGS ─────────────────────────────────────────────────────────────
+function changePw() {
+  const cur=gv('pw_cur'), nw=gv('pw_new'), nw2=gv('pw_new2');
+  const auth=getAuth();
+  const ss=document.getElementById('ss-settings');
+  if(cur!==auth.hash){ setStatus('ss-settings','✗ Current password incorrect','err'); return; }
+  if(nw!==nw2){ setStatus('ss-settings','✗ New passwords do not match','err'); return; }
+  if(nw.length<6){ setStatus('ss-settings','✗ Password must be at least 6 characters','err'); return; }
+  localStorage.setItem(KEYS.auth, JSON.stringify({user:auth.user,hash:nw}));
+  setStatus('ss-settings','✓ Password updated','ok');
+  toast('Password changed successfully');
+  sv('pw_cur',''); sv('pw_new',''); sv('pw_new2','');
+}
+
+function exportData() {
+  const data = { content: getAllData(), images: getImages(), enquiries: getEnquiries() };
+  const blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'rose-mutua-backup-'+new Date().toISOString().split('T')[0]+'.json';
+  a.click();
+  toast('Data exported!');
+}
+function importData(input) {
+  const file=input.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try {
+      const data=JSON.parse(e.target.result);
+      if(data.content) localStorage.setItem(KEYS.content, JSON.stringify(data.content));
+      if(data.images) localStorage.setItem(KEYS.images, JSON.stringify(data.images));
+      if(data.enquiries) localStorage.setItem(KEYS.enquiries, JSON.stringify(data.enquiries));
+      toast('Data imported successfully!');
+      loadAll();
+    } catch { toast('Import failed — invalid file','err'); }
+  };
+  reader.readAsText(file);
+  input.value='';
+}
+
+// ─── DASHBOARD ────────────────────────────────────────────────────────────
+function renderDash() {
+  const team=getData('team')||[];
+  document.getElementById('d-team').textContent=team.length;
+  document.getElementById('d-images').textContent=getImages().length;
+  document.getElementById('d-enquiries').textContent=getEnquiries().length;
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Admin — Kasikeu Girls School</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --g:#1a3a2a;--g2:#2d5c42;--g3:#3d7a58;
+  --gold:#c8a84b;--gold2:#e0c278;--goldp:#f5ecd4;
+  --bg:#f0f2f5;--white:#fff;--red:#e53e3e;
+  --bdr:#dde1e7;--txt:#1a202c;--muted:#64748b;
+  --SB:250px;--TB:54px;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--txt);font-size:14px;min-height:100vh;}
+a{text-decoration:none;color:inherit;}
+input,textarea,select,button{font-family:inherit;font-size:13.5px;}
+button{cursor:pointer;}
+img{display:block;max-width:100%;}
+
+/* ─ SIDEBAR ─ */
+#SB{
+  width:var(--SB);background:var(--g);color:#fff;
+  position:fixed;top:0;left:0;bottom:0;z-index:500;
+  display:flex;flex-direction:column;overflow-y:auto;
+  transition:transform .26s ease;
+  will-change:transform;
+}
+.sb-brand{padding:.9rem 1rem;border-bottom:1px solid rgba(255,255,255,.1);display:flex;align-items:center;gap:9px;flex-shrink:0;}
+.sb-ball{width:36px;height:36px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--g);flex-shrink:0;}
+.sb-nm{font-size:12px;font-weight:700;color:#fff;line-height:1.3;}
+.sb-sm{font-size:8.5px;color:var(--gold2);text-transform:uppercase;letter-spacing:1px;}
+.sb-nav{padding:.3rem 0;flex:1;}
+.sb-hd{font-size:8.5px;text-transform:uppercase;letter-spacing:2px;color:rgba(255,255,255,.28);padding:.6rem 1rem .1rem;font-weight:700;}
+.sb-btn{display:flex;align-items:center;gap:8px;padding:.55rem 1rem;color:rgba(255,255,255,.7);font-size:12.5px;font-weight:500;border:none;background:none;width:100%;text-align:left;border-left:3px solid transparent;white-space:nowrap;transition:all .14s;}
+.sb-btn:hover{color:#fff;background:rgba(255,255,255,.06);}
+.sb-btn.on{color:#fff;background:rgba(200,168,75,.2);border-left-color:var(--gold);}
+.sb-btn .ic{width:16px;text-align:center;font-size:13px;flex-shrink:0;}
+.sb-ft{padding:.6rem 1rem;border-top:1px solid rgba(255,255,255,.09);font-size:10.5px;color:rgba(255,255,255,.3);flex-shrink:0;}
+.sb-ft a{color:var(--gold2);font-weight:600;}
+
+/* ─ TOPBAR ─ */
+#TB{
+  position:fixed;top:0;left:var(--SB);right:0;height:var(--TB);
+  background:var(--white);border-bottom:1px solid var(--bdr);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 1rem;z-index:400;gap:.5rem;
+}
+.tb-l{display:flex;align-items:center;gap:.5rem;}
+#HAM{
+  display:none;/* desktop: hidden */
+  flex-direction:column;gap:4px;
+  border:none;background:none;padding:5px 6px;border-radius:6px;
+}
+#HAM span{width:19px;height:2px;background:var(--txt);border-radius:2px;display:block;transition:.22s;}
+#HAM.open span:nth-child(1){transform:translateY(6px) rotate(45deg);}
+#HAM.open span:nth-child(2){opacity:0;}
+#HAM.open span:nth-child(3){transform:translateY(-6px) rotate(-45deg);}
+#PTITLE{font-weight:700;font-size:14.5px;color:var(--txt);}
+.tb-r{display:flex;align-items:center;gap:.4rem;flex-shrink:0;}
+#SS{font-size:11px;color:var(--muted);background:var(--bg);padding:3px 7px;border-radius:5px;white-space:nowrap;}
+
+/* ─ OVERLAY ─ */
+#OV{display:none;position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:499;}
+#OV.on{display:block;}
+
+/* ─ MAIN ─ */
+#MAIN{margin-left:var(--SB);margin-top:var(--TB);padding:1.1rem;min-height:calc(100vh - var(--TB));}
+
+/* ─ PANELS ─ */
+.panel{display:none;}
+.panel.on{display:block;}
+
+/* ─ CARDS ─ */
+.card{background:var(--white);border-radius:11px;border:1px solid var(--bdr);margin-bottom:1.1rem;overflow:hidden;}
+.card-hd{padding:.85rem 1rem;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;gap:.5rem;flex-wrap:wrap;}
+.card-hd h3{font-size:13.5px;font-weight:700;display:flex;align-items:center;gap:7px;}
+.card-bd{padding:1rem;}
+.hint{font-size:12px;color:var(--muted);margin-bottom:.8rem;line-height:1.6;}
+
+/* ─ BUTTONS ─ */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:7px;font-size:12.5px;font-weight:600;border:none;cursor:pointer;transition:.15s;white-space:nowrap;}
+.btn-g{background:var(--g);color:#fff;} .btn-g:hover{background:var(--g2);}
+.btn-gold{background:var(--gold);color:var(--g);} .btn-gold:hover{background:var(--gold2);}
+.btn-out{background:transparent;border:1.5px solid var(--bdr);color:var(--txt);} .btn-out:hover{border-color:var(--g);color:var(--g);}
+.btn-red{background:var(--red);color:#fff;} .btn-red:hover{opacity:.85;}
+.btn-sm{padding:5px 10px;font-size:11.5px;}
+
+/* ─ FORM ─ */
+.fg{margin-bottom:.8rem;}
+.fg label{display:block;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:.28rem;}
+.fg input,.fg textarea,.fg select{
+  width:100%;padding:9px 11px;border:1.5px solid var(--bdr);border-radius:7px;
+  color:var(--txt);background:var(--white);outline:none;transition:.18s;
+}
+.fg input:focus,.fg textarea:focus,.fg select:focus{border-color:var(--g3);box-shadow:0 0 0 3px rgba(61,122,88,.1);}
+.fg textarea{resize:vertical;min-height:72px;}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;}
+.r3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.6rem;}
+
+/* ─ PHOTO UPLOAD ─ */
+.upzone{position:relative;border:2px dashed var(--bdr);border-radius:9px;padding:1.1rem;text-align:center;cursor:pointer;background:#fafafa;transition:.18s;}
+.upzone:hover{border-color:var(--g3);background:#f0faf4;}
+.upzone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.upzone .uico{font-size:1.9rem;margin-bottom:.3rem;}
+.upzone p{font-size:11.5px;color:var(--muted);margin-top:2px;}
+.upzone strong{font-size:12.5px;color:var(--g);}
+.prev-img{margin-top:.5rem;width:100%;max-height:180px;object-fit:cover;border-radius:8px;border:1px solid var(--bdr);}
+.prev-sm{width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid var(--goldp);margin-top:.4rem;}
+.prev-logo{height:52px;object-fit:contain;border-radius:6px;border:1px solid var(--bdr);max-width:180px;margin-top:.4rem;}
+
+/* ─ DASH ─ */
+.dash-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.9rem;margin-bottom:1.1rem;}
+.dc{background:var(--white);border:1px solid var(--bdr);border-radius:11px;padding:1rem;text-align:center;}
+.dc .dv{font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;color:var(--g);line-height:1;}
+.dc .dl{font-size:11.5px;color:var(--muted);margin-top:3px;}
+.dc .di{font-size:1.7rem;margin-bottom:.3rem;}
+
+/* ─ INLINE LIST EDITOR ─ */
+.list-row{display:grid;gap:.5rem;align-items:start;margin-bottom:.55rem;background:var(--bg);border-radius:8px;padding:.6rem;}
+.list-row input,.list-row textarea{padding:7px 9px;border:1.5px solid var(--bdr);border-radius:6px;width:100%;background:var(--white);color:var(--txt);}
+.list-row textarea{min-height:52px;resize:vertical;}
+.row-actions{display:flex;gap:.3rem;justify-content:flex-end;margin-top:.3rem;}
+
+/* ─ STAFF GRID ─ */
+.staff-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:.8rem;}
+.sc{background:var(--bg);border:1px solid var(--bdr);border-radius:10px;padding:.8rem;text-align:center;position:relative;}
+.sc-del{position:absolute;top:.4rem;right:.4rem;width:22px;height:22px;background:var(--red);color:#fff;border:none;border-radius:5px;cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;}
+.sc-photo{width:64px;height:64px;border-radius:50%;border:3px solid var(--goldp);object-fit:cover;margin:0 auto .5rem;display:flex;align-items:center;justify-content:center;font-size:1.8rem;background:var(--g);}
+.sc-photo img{width:100%;height:100%;border-radius:50%;object-fit:cover;}
+.sc h4{font-size:12.5px;font-weight:700;margin-bottom:2px;}
+.sc .role{font-size:10.5px;color:var(--g3);text-transform:uppercase;letter-spacing:.5px;font-weight:600;margin-bottom:2px;}
+.sc .subj{font-size:11px;color:var(--muted);}
+.sc-actions{margin-top:.5rem;}
+.photo-label{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:600;color:var(--g);border:1.5px solid var(--g);border-radius:6px;padding:4px 8px;cursor:pointer;}
+.photo-label input{display:none;}
+
+/* ─ MODAL ─ */
+.modal-wrap{display:none;position:fixed;inset:0;background:rgba(0,0,0,.48);z-index:600;align-items:center;justify-content:center;padding:1rem;}
+.modal-wrap.on{display:flex;}
+.modal{background:var(--white);border-radius:14px;padding:1.3rem;width:100%;max-width:440px;max-height:92vh;overflow-y:auto;}
+.modal-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;}
+.modal-hd h3{font-size:15px;font-weight:700;}
+.mc{width:26px;height:26px;background:var(--bg);border:none;border-radius:6px;cursor:pointer;font-size:14px;}
+
+/* ─ TOAST ─ */
+#TOAST{
+  position:fixed;bottom:1.2rem;right:1.2rem;
+  background:var(--g);color:#fff;
+  padding:.7rem 1.1rem;border-radius:9px;font-size:13px;font-weight:500;
+  z-index:9999;display:flex;align-items:center;gap:.4rem;
+  transform:translateY(80px);opacity:0;
+  transition:all .28s;pointer-events:none;max-width:280px;
+}
+#TOAST.on{transform:translateY(0);opacity:1;}
+
+/* ─ WARNING BANNER ─ */
+.warn{background:#fffbeb;border:1px solid #f59e0b;border-radius:9px;padding:.7rem 1rem;font-size:12.5px;color:#92400e;margin-bottom:1rem;display:flex;gap:.5rem;align-items:flex-start;}
+
+/* ─ RESPONSIVE ─ */
+@media(max-width:860px){
+  #SB{transform:translateX(-100%);}
+  #SB.on{transform:translateX(0);}
+  #TB{left:0;}
+  #MAIN{margin-left:0;}
+  #HAM{display:flex !important;}
+  .r2,.r3{grid-template-columns:1fr !important;}
+  .dash-grid{grid-template-columns:1fr 1fr 1fr;}
+}
+@media(max-width:480px){
+  #MAIN{padding:.7rem;}
+  .dash-grid{grid-template-columns:1fr 1fr;}
+  .staff-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));}
+}
+</style>
+</head>
+<body>
+
+<!-- OVERLAY (mobile sidebar close) -->
+<div id="OV" onclick="closeSB()"></div>
+
+<!-- SIDEBAR -->
+<aside id="SB">
+  <div class="sb-brand">
+    <div class="sb-ball" id="SB_LOGO">K</div>
+    <div><div class="sb-nm" id="SB_NAME">Kasikeu Girls</div><div class="sb-sm">Admin Panel</div></div>
+  </div>
+  <nav class="sb-nav">
+    <div class="sb-hd">Dashboard</div>
+    <button class="sb-btn on" onclick="go('dashboard',this)"><span class="ic">📊</span>Overview</button>
+    <div class="sb-hd">Content</div>
+    <button class="sb-btn" onclick="go('logo',this)"><span class="ic">🏷️</span>Logo &amp; Branding</button>
+    <button class="sb-btn" onclick="go('hero',this)"><span class="ic">🌟</span>Hero Section</button>
+    <button class="sb-btn" onclick="go('ann',this)"><span class="ic">📣</span>Announcements</button>
+    <button class="sb-btn" onclick="go('about',this)"><span class="ic">🏫</span>About Section</button>
+    <button class="sb-btn" onclick="go('acad',this)"><span class="ic">📚</span>Academics</button>
+    <button class="sb-btn" onclick="go('fac',this)"><span class="ic">🏗️</span>Facilities</button>
+    <button class="sb-btn" onclick="go('co',this)"><span class="ic">⚽</span>Co-Curricular</button>
+    <button class="sb-btn" onclick="go('adm',this)"><span class="ic">📋</span>Admissions</button>
+    <button class="sb-btn" onclick="go('staff',this)"><span class="ic">👩‍🏫</span>Staff &amp; Team</button>
+    <button class="sb-btn" onclick="go('news',this)"><span class="ic">📰</span>News &amp; Events</button>
+    <button class="sb-btn" onclick="go('contact',this)"><span class="ic">📞</span>Contact Info</button>
+    <div class="sb-hd">Tools</div>
+    <button class="sb-btn" onclick="exportData()"><span class="ic">💾</span>Export Backup</button>
+    <button class="sb-btn" onclick="importClick()"><span class="ic">📂</span>Import Backup</button>
+    <button class="sb-btn" onclick="resetData()"><span class="ic">🔄</span>Reset to Defaults</button>
+  </nav>
+  <div class="sb-ft">
+    <div>Admin v2 · <a href="kasikeu-girls-school.html" target="_blank">View Website ↗</a></div>
+  </div>
+</aside>
+<input type="file" id="importFile" accept=".json" style="display:none" onchange="doImport(event)"/>
+
+<!-- TOPBAR -->
+<div id="TB">
+  <div class="tb-l">
+    <button id="HAM" onclick="toggleSB()"><span></span><span></span><span></span></button>
+    <span id="PTITLE">Dashboard</span>
+  </div>
+  <div class="tb-r">
+    <span id="SS">All saved ✅</span>
+    <button class="btn btn-out btn-sm" onclick="window.open('kasikeu-girls-school.html','_blank')">👁 Preview</button>
+    <button class="btn btn-g btn-sm" onclick="saveAll()">💾 Save All</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="TOAST"></div>
+
+<!-- MAIN -->
+<main id="MAIN">
+
+<!-- ══ DASHBOARD ══ -->
+<div class="panel on" id="panel-dashboard">
+  <div class="warn">⚠️ <span>Both <strong>admin.html</strong> and <strong>kasikeu-girls-school.html</strong> must be in the same folder for changes to appear on the website. Data is stored in your browser's localStorage.</span></div>
+  <div class="dash-grid">
+    <div class="dc"><div class="di">🏫</div><div class="dv">40+</div><div class="dl">Years</div></div>
+    <div class="dc"><div class="di">👩‍🎓</div><div class="dv" id="d_students">800+</div><div class="dl">Students</div></div>
+    <div class="dc"><div class="di">👩‍🏫</div><div class="dv" id="d_staff">8</div><div class="dl">Staff</div></div>
+    <div class="dc"><div class="di">📰</div><div class="dv" id="d_news">3</div><div class="dl">Articles</div></div>
+    <div class="dc"><div class="di">📣</div><div class="dv" id="d_ann">3</div><div class="dl">Announcements</div></div>
+    <div class="dc"><div class="di">🏆</div><div class="dv">97%</div><div class="dl">Pass Rate</div></div>
+  </div>
+  <div class="card">
+    <div class="card-hd"><h3>⚡ Quick Start Guide</h3></div>
+    <div class="card-bd">
+      <p class="hint">1️⃣ Edit any section using the sidebar links.<br/>2️⃣ Click <strong>Save</strong> inside each section — or use <strong>Save All</strong> in the top bar.<br/>3️⃣ For photos/images, click the upload zone and choose a file from your device.<br/>4️⃣ Open <strong>kasikeu-girls-school.html</strong> (in the same folder) to see all changes live.<br/>5️⃣ Use <strong>Export Backup</strong> to save your data as a file in case you switch browsers.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ LOGO ══ -->
+<div class="panel" id="panel-logo">
+  <div class="card">
+    <div class="card-hd"><h3>🏷️ Logo &amp; Branding</h3><button class="btn btn-g btn-sm" onclick="save('logo')">💾 Save</button></div>
+    <div class="card-bd">
+      <div class="r2">
+        <div class="fg"><label>School Name (navigation)</label><input id="logo_name" type="text"/></div>
+        <div class="fg"><label>Tagline (navigation)</label><input id="logo_tag" type="text"/></div>
+      </div>
+      <div class="fg"><label>Logo Letter (shown if no image uploaded)</label><input id="logo_letter" type="text" maxlength="3" style="max-width:80px"/></div>
+      <div class="fg">
+        <label>Upload Logo Image (transparent PNG recommended)</label>
+        <div class="upzone">
+          <input type="file" accept="image/*" onchange="uploadImg(event,'logo_img','lprev','lrm',200,200)"/>
+          <div class="uico">🖼️</div><strong>Click or drag logo here</strong><p>PNG, JPG, SVG · kept small automatically</p>
+        </div>
+        <img id="lprev" class="prev-logo" style="display:none"/>
+        <button id="lrm" class="btn btn-red btn-sm" style="display:none;margin-top:.4rem" onclick="clearImg('logo_img','lprev','lrm')">✕ Remove</button>
+      </div>
+      <hr style="border:none;border-top:1px solid var(--bdr);margin:1rem 0"/>
+      <div class="r2">
+        <div class="fg"><label>Footer School Name</label><input id="logo_fname" type="text"/></div>
+        <div class="fg"><label>Footer Subtitle</label><input id="logo_fsub" type="text"/></div>
+      </div>
+      <div class="fg"><label>Footer Description</label><textarea id="logo_fdesc"></textarea></div>
+      <div class="fg"><label>Copyright Line</label><input id="logo_copy" type="text"/></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ HERO ══ -->
+<div class="panel" id="panel-hero">
+  <div class="card">
+    <div class="card-hd"><h3>🌟 Hero Section</h3><button class="btn btn-g btn-sm" onclick="save('hero')">💾 Save</button></div>
+    <div class="card-bd">
+      <div class="fg"><label>Badge (small pill text at top)</label><input id="hero_badge" type="text"/></div>
+      <div class="fg"><label>Main Title — wrap a word in *asterisks* to make it italic gold</label><input id="hero_title" type="text"/></div>
+      <div class="fg"><label>Italic Subtitle</label><input id="hero_sub" type="text"/></div>
+      <div class="fg"><label>Description paragraph</label><textarea id="hero_desc"></textarea></div>
+      <div class="r2">
+        <div class="fg"><label>Primary Button</label><input id="hero_btn1" type="text"/></div>
+        <div class="fg"><label>Secondary Button</label><input id="hero_btn2" type="text"/></div>
+      </div>
+      <p style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:.5rem">Statistics</p>
+      <div class="r2">
+        <div class="fg"><label>Stat 1 — Number</label><input id="hero_s1n" type="text"/></div>
+        <div class="fg"><label>Stat 1 — Label</label><input id="hero_s1l" type="text"/></div>
+        <div class="fg"><label>Stat 2 — Number</label><input id="hero_s2n" type="text"/></div>
+        <div class="fg"><label>Stat 2 — Label</label><input id="hero_s2l" type="text"/></div>
+        <div class="fg"><label>Stat 3 — Number</label><input id="hero_s3n" type="text"/></div>
+        <div class="fg"><label>Stat 3 — Label</label><input id="hero_s3l" type="text"/></div>
+        <div class="fg"><label>Stat 4 — Number</label><input id="hero_s4n" type="text"/></div>
+        <div class="fg"><label>Stat 4 — Label</label><input id="hero_s4l" type="text"/></div>
+      </div>
+      <div class="fg">
+        <label>Background Photo (optional wide image)</label>
+        <div class="upzone">
+          <input type="file" accept="image/*" onchange="uploadImg(event,'hero_bg','hprev','hrm',1200,700)"/>
+          <div class="uico">🌄</div><strong>Upload Background Image</strong><p>Wide/landscape photo · auto-compressed</p>
+        </div>
+        <img id="hprev" class="prev-img" style="display:none"/>
+        <button id="hrm" class="btn btn-red btn-sm" style="display:none;margin-top:.4rem" onclick="clearImg('hero_bg','hprev','hrm')">✕ Remove</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ANNOUNCEMENTS ══ -->
+<div class="panel" id="panel-ann">
+  <div class="card">
+    <div class="card-hd">
+      <h3>📣 Announcements (shown in Hero)</h3>
+      <div style="display:flex;gap:.4rem">
+        <button class="btn btn-gold btn-sm" onclick="addAnn()">+ Add</button>
+        <button class="btn btn-g btn-sm" onclick="saveAnns()">💾 Save</button>
+      </div>
+    </div>
+    <div class="card-bd">
+      <p class="hint">These announcements appear in the hero section of the website. Add 2–4 for best results.</p>
+      <div id="annEd"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ABOUT ══ -->
+<div class="panel" id="panel-about">
+  <div class="card">
+    <div class="card-hd"><h3>🏫 About Section</h3><button class="btn btn-g btn-sm" onclick="save('about')">💾 Save</button></div>
+    <div class="card-bd">
+      <div class="r2">
+        <div class="fg"><label>Section Label</label><input id="about_lbl" type="text"/></div>
+        <div class="fg"><label>Title (use *word* for italic)</label><input id="about_title" type="text"/></div>
+      </div>
+      <div class="fg"><label>Main Description</label><textarea id="about_desc"></textarea></div>
+      <div class="fg"><label>Mission Statement</label><textarea id="about_mission"></textarea></div>
+      <div class="fg"><label>Second Paragraph</label><textarea id="about_desc2"></textarea></div>
+      <p style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:.5rem">Stat Badges</p>
+      <div class="r2">
+        <div class="fg"><label>Badge 1 Number</label><input id="about_b1n" type="text"/></div>
+        <div class="fg"><label>Badge 1 Label</label><input id="about_b1l" type="text"/></div>
+        <div class="fg"><label>Badge 2 Number</label><input id="about_b2n" type="text"/></div>
+        <div class="fg"><label>Badge 2 Label</label><input id="about_b2l" type="text"/></div>
+        <div class="fg"><label>Badge 3 Number</label><input id="about_b3n" type="text"/></div>
+        <div class="fg"><label>Badge 3 Label</label><input id="about_b3l" type="text"/></div>
+        <div class="fg"><label>Badge 4 Number</label><input id="about_b4n" type="text"/></div>
+        <div class="fg"><label>Badge 4 Label</label><input id="about_b4l" type="text"/></div>
+      </div>
+      <div class="fg">
+        <label>School / Campus Photo</label>
+        <div class="upzone">
+          <input type="file" accept="image/*" onchange="uploadImg(event,'about_photo','aprev','arm',900,700)"/>
+          <div class="uico">📷</div><strong>Upload School Photo</strong><p>Building, gate or campus · auto-compressed</p>
+        </div>
+        <img id="aprev" class="prev-img" style="display:none"/>
+        <button id="arm" class="btn btn-red btn-sm" style="display:none;margin-top:.4rem" onclick="clearImg('about_photo','aprev','arm')">✕ Remove</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ACADEMICS ══ -->
+<div class="panel" id="panel-acad">
+  <div class="card">
+    <div class="card-hd"><h3>📚 Academics Section</h3><button class="btn btn-g btn-sm" onclick="save('acad')">💾 Save</button></div>
+    <div class="card-bd">
+      <div class="r2">
+        <div class="fg"><label>Section Label</label><input id="acad_lbl" type="text"/></div>
+        <div class="fg"><label>Title</label><input id="acad_title" type="text"/></div>
+      </div>
+      <div class="fg"><label>Description</label><textarea id="acad_desc"></textarea></div>
+      <hr style="border:none;border-top:1px solid var(--bdr);margin:1rem 0"/>
+      <p style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:.5rem">KCSE Results Banner</p>
+      <div class="r2">
+        <div class="fg"><label>Banner Title</label><input id="acad_rt" type="text"/></div>
+        <div class="fg"><label>Banner Description</label><input id="acad_rd" type="text"/></div>
+        <div class="fg"><label>Stat 1 Value</label><input id="acad_r1n" type="text"/></div>
+        <div class="fg"><label>Stat 1 Label</label><input id="acad_r1l" type="text"/></div>
+        <div class="fg"><label>Stat 2 Value</label><input id="acad_r2n" type="text"/></div>
+        <div class="fg"><label>Stat 2 Label</label><input id="acad_r2l" type="text"/></div>
+        <div class="fg"><label>Stat 3 Value</label><input id="acad_r3n" type="text"/></div>
+        <div class="fg"><label>Stat 3 Label</label><input id="acad_r3l" type="text"/></div>
+        <div class="fg"><label>Stat 4 Value</label><input id="acad_r4n" type="text"/></div>
+        <div class="fg"><label>Stat 4 Label</label><input id="acad_r4l" type="text"/></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ FACILITIES ══ -->
+<div class="panel" id="panel-fac">
+  <div class="card">
+    <div class="card-hd">
+      <h3>🏗️ Facilities</h3>
+      <div style="display:flex;gap:.4rem">
+        <button class="btn btn-gold btn-sm" onclick="addFac()">+ Add</button>
+        <button class="btn btn-g btn-sm" onclick="saveFacs()">💾 Save</button>
+      </div>
+    </div>
+    <div class="card-bd">
+      <div class="r2">
+        <div class="fg"><label>Section Label</label><input id="fac_lbl" type="text"/></div>
+        <div class="fg"><label>Title</label><input id="fac_title" type="text"/></div>
+      </div>
+      <div class="fg"><label>Description</label><textarea id="fac_desc"></textarea></div>
+      <hr style="border:none;border-top:1px solid var(--bdr);margin:1rem 0"/>
+      <p class="hint">For each facility: enter an emoji, then the name, then the description.</p>
+      <div id="facEd"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CO-CURRICULAR ══ -->
+<div class="panel" id="panel-co">
+  <div class="card">
+    <div class="card-hd">
+      <h3>⚽ Co-Curricular Activities</h3>
+      <div style="display:flex;gap:.4rem">
+        <button class="btn btn-gold btn-sm" onclick="addClub()">+ Add</button>
+        <button class="btn btn-g btn-sm" onclick="saveClubs()">💾 Save</button>
+      </div>
+    </div>
+    <div class="card-bd">
+      <div class="r2">
+        <div class="fg"><label>Section Label</label><input id="co_lbl" type="text"/></div>
+        <div class="fg"><label>Title</label><input id="co_title" type="text"/></div>
+      </div>
+      <div class="fg"><label>Description</label><textarea id="co_desc"></textarea></div>
+      <hr style="border:none;border-top:1px solid var(--bdr);margin:1rem 0"/>
+      <div id="coEd"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ADMISSIONS ══ -->
+<div class="panel" id="panel-adm">
+  <div class="card">
+    <div class="card-hd"><h3>📋 Admissions</h3><button class="btn btn-g btn-sm" onclick="save('adm')">💾 Save</button></div>
+    <div class="card-bd">
+      <div class="r2">
+        <div class="fg"><label>Section Label</label><input id="adm_lbl" type="text"/></div>
+        <div class="fg"><label>Title</label><input id="adm_title" type="text"/></div>
+      </div>
+      <div class="fg"><label>Description</label><textarea id="adm_desc"></textarea></div>
+      <hr style="border:none;border-top:1px solid var(--bdr);margin:1rem 0"/>
+      <p style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:.5rem">Fees Structure</p>
+      <div class="r2">
+        <div class="fg"><label>Tuition Fees</label><input id="adm_f1" type="text"/></div>
+        <div class="fg"><label>Boarding Fees</label><input id="adm_f2" type="text"/></div>
+        <div class="fg"><label>Activity Levy</label><input id="adm_f3" type="text"/></div>
+        <div class="fg"><label>Admission Fee</label><input id="adm_f4" type="text"/></div>
+        <div class="fg"><label>Uniform &amp; Books</label><input id="adm_f5" type="text"/></div>
+      </div>
+      <hr style="border:none;border-top:1px solid var(--bdr);margin:1rem 0"/>
+      <p style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:.5rem">Key Dates</p>
+      <div class="r2">
+        <div class="fg"><label>Applications Open</label><input id="adm_d1" type="text"/></div>
+        <div class="fg"><label>Deadline</label><input id="adm_d2" type="text"/></div>
+        <div class="fg"><label>Interviews</label><input id="adm_d3" type="text"/></div>
+        <div class="fg"><label>Results</label><input id="adm_d4" type="text"/></div>
+        <div class="fg"><label>Reporting Date</label><input id="adm_d5" type="text"/></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ STAFF ══ -->
+<div class="panel" id="panel-staff">
+  <div class="card">
+    <div class="card-hd">
+      <h3>👩‍🏫 Staff &amp; Team</h3>
+      <div style="display:flex;gap:.4rem">
+        <button class="btn btn-gold btn-sm" onclick="openAddStaff()">+ Add Member</button>
+        <button class="btn btn-g btn-sm" onclick="save('staff')">💾 Save</button>
+      </div>
+    </div>
+    <div class="card-bd">
+      <div class="r2">
+        <div class="fg"><label>Section Label</label><input id="staff_lbl" type="text"/></div>
+        <div class="fg"><label>Title</label><input id="staff_title" type="text"/></div>
+      </div>
+      <div class="fg"><label>Description</label><textarea id="staff_desc"></textarea></div>
+      <hr style="border:none;border-top:1px solid var(--bdr);margin:1rem 0"/>
+      <div class="staff-grid" id="staffGrid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ NEWS ══ -->
+<div class="panel" id="panel-news">
+  <div class="card">
+    <div class="card-hd">
+      <h3>📰 News &amp; Events</h3>
+      <div style="display:flex;gap:.4rem">
+        <button class="btn btn-gold btn-sm" onclick="openAddNews()">+ Add Article</button>
+        <button class="btn btn-g btn-sm" onclick="saveNews()">💾 Save</button>
+      </div>
+    </div>
+    <div class="card-bd">
+      <div class="r2">
+        <div class="fg"><label>Section Label</label><input id="news_lbl" type="text"/></div>
+        <div class="fg"><label>Title</label><input id="news_title" type="text"/></div>
+      </div>
+      <hr style="border:none;border-top:1px solid var(--bdr);margin:1rem 0"/>
+      <p style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:.5rem">News Articles</p>
+      <div id="newsGrid"></div>
+      <hr style="border:none;border-top:1px solid var(--bdr);margin:1rem 0"/>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.6rem;flex-wrap:wrap;gap:.4rem">
+        <p style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;">Upcoming Events</p>
+        <button class="btn btn-out btn-sm" onclick="addEvent()">+ Add Event</button>
+      </div>
+      <div id="evEd"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CONTACT ══ -->
+<div class="panel" id="panel-contact">
+  <div class="card">
+    <div class="card-hd"><h3>📞 Contact Info</h3><button class="btn btn-g btn-sm" onclick="save('contact')">💾 Save</button></div>
+    <div class="card-bd">
+      <div class="r2">
+        <div class="fg"><label>Section Label</label><input id="con_lbl" type="text"/></div>
+        <div class="fg"><label>Title</label><input id="con_title" type="text"/></div>
+      </div>
+      <div class="fg"><label>Description</label><textarea id="con_desc"></textarea></div>
+      <div class="fg"><label>Address (line breaks allowed)</label><textarea id="con_addr" style="min-height:80px"></textarea></div>
+      <div class="r2">
+        <div class="fg"><label>Phone 1 (Principal)</label><input id="con_p1" type="text"/></div>
+        <div class="fg"><label>Phone 2 (Admissions)</label><input id="con_p2" type="text"/></div>
+        <div class="fg"><label>Email 1 (General)</label><input id="con_e1" type="text"/></div>
+        <div class="fg"><label>Email 2 (Admissions)</label><input id="con_e2" type="text"/></div>
+        <div class="fg"><label>Office Hours Weekdays</label><input id="con_h1" type="text"/></div>
+        <div class="fg"><label>Office Hours Saturday</label><input id="con_h2" type="text"/></div>
+      </div>
+      <p style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:.5rem">Social Media URLs</p>
+      <div class="r2">
+        <div class="fg"><label>Facebook</label><input id="con_fb" type="text" placeholder="https://facebook.com/..."/></div>
+        <div class="fg"><label>Twitter / X</label><input id="con_tw" type="text" placeholder="https://x.com/..."/></div>
+        <div class="fg"><label>WhatsApp</label><input id="con_wa" type="text" placeholder="https://wa.me/254..."/></div>
+        <div class="fg"><label>YouTube</label><input id="con_yt" type="text" placeholder="https://youtube.com/..."/></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main><!-- /MAIN -->
+
+<!-- MODAL: Add Staff -->
+<div class="modal-wrap" id="staffModal">
+  <div class="modal">
+    <div class="modal-hd"><h3>Add Team Member</h3><button class="mc" onclick="closeModal('staffModal')">✕</button></div>
+    <div class="fg"><label>Full Name</label><input id="m_name" type="text" placeholder="Mrs. Grace Mutua"/></div>
+    <div class="fg"><label>Role / Title</label><input id="m_role" type="text" placeholder="Principal"/></div>
+    <div class="fg"><label>Qualification / Subject</label><input id="m_subj" type="text" placeholder="B.Ed · M.Ed Administration"/></div>
+    <div class="fg"><label>Emoji (shown if no photo)</label><input id="m_emoji" type="text" value="👩‍🏫" maxlength="4" style="max-width:80px"/></div>
+    <div class="fg">
+      <label>Photo</label>
+      <div class="upzone" style="padding:.8rem">
+        <input type="file" accept="image/*" onchange="previewNewStaff(event)"/>
+        <div class="uico">📷</div><strong>Upload Photo</strong><p>Passport-style · auto-compressed</p>
+      </div>
+      <div style="text-align:center;margin-top:.4rem">
+        <img id="m_prev" class="prev-sm" style="display:none"/>
+      </div>
+    </div>
+    <div style="display:flex;gap:.4rem;margin-top:.5rem">
+      <button class="btn btn-g" style="flex:1" onclick="confirmAddStaff()">Add Member</button>
+      <button class="btn btn-out" onclick="closeModal('staffModal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Add News -->
+<div class="modal-wrap" id="newsModal">
+  <div class="modal">
+    <div class="modal-hd"><h3>Add News Article</h3><button class="mc" onclick="closeModal('newsModal')">✕</button></div>
+    <div class="r2">
+      <div class="fg"><label>Category / Tag</label><input id="mn_tag" type="text" placeholder="Achievement"/></div>
+      <div class="fg"><label>Emoji Icon</label><input id="mn_emoji" type="text" value="📰" maxlength="4" style="max-width:80px"/></div>
+    </div>
+    <div class="fg"><label>Headline</label><input id="mn_title" type="text" placeholder="Article headline..."/></div>
+    <div class="fg"><label>Body Text</label><textarea id="mn_body" placeholder="Article content..."></textarea></div>
+    <div class="fg"><label>Date</label><input id="mn_date" type="text" placeholder="March 15, 2025"/></div>
+    <div style="display:flex;gap:.4rem;margin-top:.5rem">
+      <button class="btn btn-g" style="flex:1" onclick="confirmAddNews()">Add Article</button>
+      <button class="btn btn-out" onclick="closeModal('newsModal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ════════════════════════════════════════════════
+   SINGLE SHARED KEY — matches kasikeu-girls-school.html
+════════════════════════════════════════════════ */
+const KEY = 'kgss_v1';
+let D = {};
+let _newPhoto = null; // temp photo for new staff modal
+
+/* ── DEFAULTS ── */
+const DEF = {
+  logo:{ name:'Kasikeu Girls Secondary', tag:'Excellence · Discipline · Leadership', letter:'K', fname:'Kasikeu Girls', fsub:'Secondary School', fdesc:'Nurturing excellence, character, and leadership in young women since 1982. Located in the heart of Makueni County, Kenya.', copy:'© 2025 Kasikeu Girls Secondary School. All rights reserved.' },
+  logo_img: null,
+  hero:{ badge:'Est. 1982 · Kasikeu, Makueni County', title:'Shaping the *Leaders* of Tomorrow', sub:'Nurturing young women in knowledge, character & purpose', desc:'Kasikeu Girls Secondary School is a centre of academic excellence committed to holistic development through rigorous academics, strong values, and transformative experiences in the heart of Makueni County, Kenya.', btn1:'Apply for Admission', btn2:'Explore Our School', s1n:'40+', s1l:'Years of Excellence', s2n:'800+', s2l:'Current Students', s3n:'97%', s3l:'KCSE Pass Rate', s4n:'65+', s4l:'Qualified Staff' },
+  hero_bg: null,
+  about:{ lbl:'About Our School', title:'A Legacy of *Excellence* Since 1982', desc:'Kasikeu Girls Secondary School was founded in 1982 by the community of Kasikeu in Makueni County with a vision to provide quality education to girls in the region. Over four decades, we have grown into one of the most respected secondary schools in Makueni County, Kenya.', mission:'"To provide a holistic, quality education that nurtures academic excellence, moral integrity, and leadership in young women, preparing them to positively contribute to society."', desc2:'We believe every girl deserves an education that builds resilience, critical thinking, confidence, and a deep sense of purpose. Our teachers, facilities, and programs are designed with this belief at their core.', b1n:'40+', b1l:'Years Strong', b2n:'A', b2l:'School Rating', b3n:'800+', b3l:'Students', b4n:'65+', b4l:'Staff' },
+  about_photo: null,
+  acad:{ lbl:'Academic Programs', title:'A Curriculum Built for *Success*', desc:'Our program follows the KICD curriculum, offering a broad and balanced education from Form 1 through Form 4, leading to the KCSE national examination.', rt:'Outstanding 2024 KCSE Results 🏆', rd:'We are proud of our Form 4 class of 2024 for their remarkable performance.', r1n:'B', r1l:'Mean Grade', r2n:'97%', r2l:'Pass Rate', r3n:'23', r3l:'A Students', r4n:'Top 5', r4l:'Makueni' },
+  fac:{ lbl:'Our Facilities', title:'Spaces Designed to *Inspire*', desc:'Our campus is equipped with modern facilities creating an environment where learning flourishes.', items:[
+    {ico:'🔬',n:'Science Laboratories',d:'Biology, Chemistry & Physics labs with modern apparatus for practicals.'},
+    {ico:'📚',n:'Library & Resource Centre',d:'Over 10,000 books, periodicals, and digital resources available.'},
+    {ico:'💻',n:'Computer Laboratory',d:'40-station lab with internet for ICT studies and research.'},
+    {ico:'🍽️',n:'Modern Dining Hall',d:'Spacious, hygienic facility serving balanced meals daily.'},
+    {ico:'🏃',n:'Sports Grounds',d:'Athletics track, volleyball, basketball, football & netball.'},
+    {ico:'🏠',n:'Student Dormitories',d:'Secure boarding facilities with 24-hour supervision.'},
+    {ico:'⚕️',n:'Medical Centre',d:'On-site clinic with a qualified nurse for primary healthcare.'},
+    {ico:'🎭',n:'Assembly Hall',d:'Large multi-purpose hall for assemblies and events.'}
+  ]},
+  co:{ lbl:'Co-Curricular Activities', title:'Beyond the Classroom: *Grow Every Day*', desc:'Education extends far beyond academics. Our rich co-curricular program helps students develop leadership and talent.', items:[
+    {ico:'🏐',n:'Sports & Athletics',d:'Volleyball, netball, football, basketball, and athletics.'},
+    {ico:'🎭',n:'Drama & Performing Arts',d:'Annual Drama Festival participants with award-winning productions.'},
+    {ico:'🎵',n:'Music & Choir',d:'Vibrant choir that has won multiple county competitions.'},
+    {ico:'🔭',n:'Science & Technology',d:'Research projects, science fairs, and innovation challenges.'},
+    {ico:'📰',n:'Journalism & Debate',d:'School magazine and public speaking competitions.'},
+    {ico:'🌱',n:'Environment & Agriculture',d:'Farm projects and the Young Farmers Society.'},
+    {ico:'✝️',n:'Religious Clubs',d:'Christian Union, Muslim Students Association, and faith groups.'},
+    {ico:'🩺',n:'Health & Wellness',d:'Wellness campaigns and peer counselling.'},
+    {ico:'🤝',n:'Community Service',d:'Outreach programs, charity drives, and clean-up initiatives.'}
+  ]},
+  adm:{ lbl:'Join Our School', title:'Admissions *Open* — Form 1, 2025', desc:'We welcome applications from bright, motivated young women who wish to pursue academic excellence.', f1:'KES 12,000/term', f2:'KES 18,000/term', f3:'KES 3,500/year', f4:'KES 2,000 (once)', f5:'~KES 8,000', d1:'1 Jan 2025', d2:'31 Jan 2025', d3:'Feb 10–14', d4:'20 Feb 2025', d5:'3 Mar 2025' },
+  staff:{ lbl:'Our Team', title:'Dedicated *Educators* & Leaders', desc:'Our school is led by experienced, passionate, and highly qualified professionals.', members:[
+    {name:'Mrs. Grace Mutua',role:'Principal',subj:'B.Ed (Science) · M.Ed Administration',emoji:'👩‍💼',photo:null},
+    {name:'Mr. Peter Kioko',role:'Deputy Principal — Academics',subj:'B.Ed (Mathematics)',emoji:'👨‍🏫',photo:null},
+    {name:'Mrs. Susan Mwithia',role:'Deputy Principal — Admin',subj:'B.Ed (Arts)',emoji:'👩‍🏫',photo:null},
+    {name:'Ms. Caroline Ndolo',role:'Head of Sciences',subj:'B.Sc Chemistry & Biology',emoji:'👩‍🔬',photo:null},
+    {name:'Mr. James Mwangangi',role:'Head of Maths & ICT',subj:'B.Ed Mathematics & Computer',emoji:'👨‍💻',photo:null},
+    {name:'Ms. Faith Kyalo',role:'Head of Languages',subj:'B.A. English & Literature',emoji:'👩‍🎨',photo:null},
+    {name:'Mr. David Mutisya',role:'Senior Counsellor',subj:'B.Ed · Diploma in Counselling',emoji:'👨‍⚕️',photo:null},
+    {name:'Ms. Agnes Munyao',role:'Head of Sports & P.E.',subj:'B.Ed Physical Education',emoji:'👩‍🏃',photo:null}
+  ]},
+  news:{ lbl:'News & Events', title:'Happenings at *Kasikeu Girls*', items:[
+    {tag:'Achievement',title:'Kasikeu Girls Wins Makueni County Science Congress 2024',body:'Our Form 3 Biology and Chemistry teams swept gold medals at the annual Makueni County Science Congress.',date:'March 15, 2025',emoji:'🏆'},
+    {tag:'Academics',title:'2024 KCSE Top Students Celebrated at Prize-Giving',body:"Our Form 4 class of 2024 achieved the school's best-ever KCSE results with a mean grade of B Plain.",date:'February 12, 2025',emoji:'📝'},
+    {tag:'Events',title:'Drama Club Takes Silver at National Drama Festival',body:'Our drama team performed at the Kenya National Drama Festival, clinching silver in the Set Book category.',date:'January 28, 2025',emoji:'🎭'}
+  ], events:[
+    {day:'28',month:'Apr',title:'Term 2 Opening Day',desc:'All students report by 7:00 AM with full requirements.'},
+    {day:'12',month:'May',title:'Inter-School Athletics',desc:'Zone 4 Athletics Competition at Kasikeu Grounds.'},
+    {day:'2',month:'Jun',title:"Parents' Open Day",desc:'Annual parents meeting and student exhibitions.'},
+    {day:'14',month:'Jun',title:'Music & Cultural Festival',desc:'Annual cultural day with music, poetry and drama.'},
+    {day:'25',month:'Jul',title:'Form 4 Mock Examinations',desc:'Term 2 mock exams begin for all Form 4 candidates.'},
+    {day:'1',month:'Aug',title:'End of Term 2',desc:'Closing assembly and prize-giving ceremony.'}
+  ]},
+  contact:{ lbl:'Get In Touch', title:'Contact *Us*', desc:'Our doors are always open for prospective parents, students, alumni, and community partners.', addr:'Kasikeu Girls Secondary School\nKasikeu, Kibwezi West Sub-County\nMakueni County, Kenya', p1:'+254 712 345 678', p2:'+254 722 987 654', e1:'info@kasikeugirlssecondary.ac.ke', e2:'admissions@kasikeugirlssecondary.ac.ke', h1:'Monday – Friday: 7:00 AM – 5:00 PM', h2:'Saturday: 8:00 AM – 12:00 PM (Term time only)', fb:'#', tw:'#', wa:'#', yt:'#' },
+  ann:{ items:[
+    {title:'Form 1 Admissions Open',body:'Applications for Form 1 (2025) now open. Collect forms from the school office.'},
+    {title:'KCSE 2024 Results',body:'Mean Grade: B (Plain) — our best ever! Congratulations to Form 4 Class of 2024.'},
+    {title:'Term 2 Opening',body:'Monday 28 April 2025. All students to report by 7:00 AM.'}
+  ]}
+};
+
+/* ── HELPERS ── */
+const $  = id => document.getElementById(id);
+const gv = id => { const e=$(id); return e?e.value:''; };
+const sv = (id,val) => { const e=$(id); if(e) e.value = val == null ? '' : String(val); };
+const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+/* ── TOAST ── */
+function toast(msg, ok=true){
+  const t=$('TOAST');
+  t.textContent = (ok?'✅ ':'❌ ')+msg;
+  t.style.background = ok ? '#1a3a2a' : '#e53e3e';
+  t.classList.add('on');
+  clearTimeout(t._t);
+  t._t = setTimeout(()=>t.classList.remove('on'), 2800);
+}
+
+/* ── PERSIST ── */
+function persist(){
+  try {
+    localStorage.setItem(KEY, JSON.stringify(D));
+    $('SS').textContent = '✅ Saved';
+  } catch(e){
+    // Quota exceeded: strip images and retry
+    const slim = JSON.parse(JSON.stringify(D));
+    slim.logo_img = null; slim.hero_bg = null; slim.about_photo = null;
+    if(slim.staff && slim.staff.members) slim.staff.members.forEach(m=>m.photo=null);
+    try { localStorage.setItem(KEY, JSON.stringify(slim)); $('SS').textContent='⚠️ Saved (no images)'; } catch(e2){}
+    toast('Storage full — images removed. Use Export to back them up.', false);
+  }
+}
+
+/* ── IMAGE COMPRESSION ── */
+function compressImg(file, maxW, maxH, q){
+  return new Promise((resolve, reject) => {
+    if(!file){ reject('No file'); return; }
+    if(!file.type.startsWith('image/')){ reject('Not an image file'); return; }
+    const reader = new FileReader();
+    reader.onerror = ()=>reject('Could not read file');
+    reader.onload = e => {
+      const img = new Image();
+      img.onerror = ()=>reject('Could not decode image');
+      img.onload = ()=>{
+        try{
+          const w0=img.naturalWidth||img.width, h0=img.naturalHeight||img.height;
+          if(!w0||!h0){ reject('Image has no dimensions'); return; }
+          const sc = Math.min(maxW/w0, maxH/h0, 1);
+          const cw=Math.max(1,Math.round(w0*sc)), ch=Math.max(1,Math.round(h0*sc));
+          const cv = document.createElement('canvas');
+          cv.width=cw; cv.height=ch;
+          cv.getContext('2d').drawImage(img,0,0,cw,ch);
+          let out = cv.toDataURL('image/jpeg', q||0.72);
+          // Shrink further if > 600KB base64
+          if(out.length > 820000) out = cv.toDataURL('image/jpeg', 0.45);
+          if(out.length > 820000){
+            const c2=document.createElement('canvas');
+            c2.width=Math.round(cw/2); c2.height=Math.round(ch/2);
+            c2.getContext('2d').drawImage(cv,0,0,c2.width,c2.height);
+            out = c2.toDataURL('image/jpeg',0.5);
+          }
+          resolve(out);
+        } catch(err){ reject('Canvas error: '+err.message); }
+      };
+      img.src=e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+async function uploadImg(event, dataKey, prevId, rmId, maxW, maxH){
+  const file = event.target.files && event.target.files[0];
+  event.target.value=''; // allow re-selection
+  if(!file) return;
+  toast('Processing image…', true);
+  try{
+    const data = await compressImg(file, maxW, maxH, 0.74);
+    D[dataKey] = data;
+    persist();
+    const p=$(prevId); if(p){p.src=data;p.style.display='block';}
+    const r=$(rmId); if(r) r.style.display='inline-flex';
+    toast('Image uploaded ✓');
+  } catch(err){
+    toast('Image error: '+err, false);
+  }
+}
+
+function clearImg(dataKey, prevId, rmId){
+  D[dataKey]=null; persist();
+  const p=$(prevId); if(p){p.src='';p.style.display='none';}
+  const r=$(rmId); if(r) r.style.display='none';
+  toast('Image removed');
+}
+
+function showImg(data, prevId, rmId){
+  if(!data) return;
+  const p=$(prevId); if(p){p.src=data;p.style.display='block';}
+  const r=$(rmId); if(r) r.style.display='inline-flex';
+}
+
+/* ── SIDEBAR ── */
+function toggleSB(){
+  const open=$('SB').classList.toggle('on');
+  $('HAM').classList.toggle('open',open);
+  $('OV').classList.toggle('on',open);
+}
+function closeSB(){
+  $('SB').classList.remove('on');
+  $('HAM').classList.remove('open');
+  $('OV').classList.remove('on');
+}
+
+/* ── PANEL NAV ── */
+const PTITLES={dashboard:'Dashboard',logo:'Logo & Branding',hero:'Hero Section',ann:'Announcements',about:'About Section',acad:'Academics',fac:'Facilities',co:'Co-Curricular',adm:'Admissions',staff:'Staff & Team',news:'News & Events',contact:'Contact Info'};
+function go(id, btn){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.sb-btn').forEach(b=>b.classList.remove('on'));
+  const p=$('panel-'+id); if(p) p.classList.add('on');
+  if(btn) btn.classList.add('on');
+  $('PTITLE').textContent = PTITLES[id]||id;
+  closeSB();
+}
+
+/* ── MODALS ── */
+function openModal(id){ $(id).classList.add('on'); }
+function closeModal(id){ $(id).classList.remove('on'); }
+document.querySelectorAll('.modal-wrap').forEach(m=>{
+  m.addEventListener('click',e=>{ if(e.target===m) m.classList.remove('on'); });
+});
+
+/* ── FILL ALL FIELDS ── */
+function fillAll(){
+  const L=D.logo||{};
+  sv('logo_name',L.name); sv('logo_tag',L.tag); sv('logo_letter',L.letter);
+  sv('logo_fname',L.fname); sv('logo_fsub',L.fsub); sv('logo_fdesc',L.fdesc); sv('logo_copy',L.copy);
+  $('SB_NAME').textContent=L.name||'Kasikeu Girls';
+  $('SB_LOGO').textContent=L.letter||'K';
+
+  const H=D.hero||{};
+  sv('hero_badge',H.badge); sv('hero_title',H.title); sv('hero_sub',H.sub); sv('hero_desc',H.desc);
+  sv('hero_btn1',H.btn1); sv('hero_btn2',H.btn2);
+  sv('hero_s1n',H.s1n); sv('hero_s1l',H.s1l); sv('hero_s2n',H.s2n); sv('hero_s2l',H.s2l);
+  sv('hero_s3n',H.s3n); sv('hero_s3l',H.s3l); sv('hero_s4n',H.s4n); sv('hero_s4l',H.s4l);
+
+  const A=D.about||{};
+  sv('about_lbl',A.lbl); sv('about_title',A.title); sv('about_desc',A.desc);
+  sv('about_mission',A.mission); sv('about_desc2',A.desc2);
+  sv('about_b1n',A.b1n); sv('about_b1l',A.b1l); sv('about_b2n',A.b2n); sv('about_b2l',A.b2l);
+  sv('about_b3n',A.b3n); sv('about_b3l',A.b3l); sv('about_b4n',A.b4n); sv('about_b4l',A.b4l);
+
+  const AC=D.acad||{};
+  sv('acad_lbl',AC.lbl); sv('acad_title',AC.title); sv('acad_desc',AC.desc);
+  sv('acad_rt',AC.rt); sv('acad_rd',AC.rd);
+  sv('acad_r1n',AC.r1n); sv('acad_r1l',AC.r1l); sv('acad_r2n',AC.r2n); sv('acad_r2l',AC.r2l);
+  sv('acad_r3n',AC.r3n); sv('acad_r3l',AC.r3l); sv('acad_r4n',AC.r4n); sv('acad_r4l',AC.r4l);
+
+  const F=D.fac||{};
+  sv('fac_lbl',F.lbl); sv('fac_title',F.title); sv('fac_desc',F.desc);
+
+  const CO=D.co||{};
+  sv('co_lbl',CO.lbl); sv('co_title',CO.title); sv('co_desc',CO.desc);
+
+  const AD=D.adm||{};
+  sv('adm_lbl',AD.lbl); sv('adm_title',AD.title); sv('adm_desc',AD.desc);
+  sv('adm_f1',AD.f1); sv('adm_f2',AD.f2); sv('adm_f3',AD.f3); sv('adm_f4',AD.f4); sv('adm_f5',AD.f5);
+  sv('adm_d1',AD.d1); sv('adm_d2',AD.d2); sv('adm_d3',AD.d3); sv('adm_d4',AD.d4); sv('adm_d5',AD.d5);
+
+  const ST=D.staff||{};
+  sv('staff_lbl',ST.lbl); sv('staff_title',ST.title); sv('staff_desc',ST.desc);
+
+  const NW=D.news||{};
+  sv('news_lbl',NW.lbl); sv('news_title',NW.title);
+
+  const C=D.contact||{};
+  sv('con_lbl',C.lbl); sv('con_title',C.title); sv('con_desc',C.desc); sv('con_addr',C.addr);
+  sv('con_p1',C.p1); sv('con_p2',C.p2); sv('con_e1',C.e1); sv('con_e2',C.e2);
+  sv('con_h1',C.h1); sv('con_h2',C.h2);
+  sv('con_fb',C.fb); sv('con_tw',C.tw); sv('con_wa',C.wa); sv('con_yt',C.yt);
+
+  // Images
+  showImg(D.logo_img,'lprev','lrm');
+  showImg(D.hero_bg,'hprev','hrm');
+  showImg(D.about_photo,'aprev','arm');
+
+  // Renderers
+  renderAnns(); renderFacs(); renderClubs(); renderStaff(); renderNews();
+  updateDash();
+}
+
+/* ── SAVE SECTIONS ── */
+function save(k){
+  switch(k){
+    case 'logo':
+      D.logo={name:gv('logo_name'),tag:gv('logo_tag'),letter:gv('logo_letter'),fname:gv('logo_fname'),fsub:gv('logo_fsub'),fdesc:gv('logo_fdesc'),copy:gv('logo_copy')};
+      $('SB_NAME').textContent=D.logo.name;
+      $('SB_LOGO').textContent=D.logo.letter||'K';
+      break;
+    case 'hero':
+      D.hero={badge:gv('hero_badge'),title:gv('hero_title'),sub:gv('hero_sub'),desc:gv('hero_desc'),btn1:gv('hero_btn1'),btn2:gv('hero_btn2'),s1n:gv('hero_s1n'),s1l:gv('hero_s1l'),s2n:gv('hero_s2n'),s2l:gv('hero_s2l'),s3n:gv('hero_s3n'),s3l:gv('hero_s3l'),s4n:gv('hero_s4n'),s4l:gv('hero_s4l')};
+      break;
+    case 'about':
+      D.about={lbl:gv('about_lbl'),title:gv('about_title'),desc:gv('about_desc'),mission:gv('about_mission'),desc2:gv('about_desc2'),b1n:gv('about_b1n'),b1l:gv('about_b1l'),b2n:gv('about_b2n'),b2l:gv('about_b2l'),b3n:gv('about_b3n'),b3l:gv('about_b3l'),b4n:gv('about_b4n'),b4l:gv('about_b4l')};
+      break;
+    case 'acad':
+      D.acad={lbl:gv('acad_lbl'),title:gv('acad_title'),desc:gv('acad_desc'),rt:gv('acad_rt'),rd:gv('acad_rd'),r1n:gv('acad_r1n'),r1l:gv('acad_r1l'),r2n:gv('acad_r2n'),r2l:gv('acad_r2l'),r3n:gv('acad_r3n'),r3l:gv('acad_r3l'),r4n:gv('acad_r4n'),r4l:gv('acad_r4l')};
+      break;
+    case 'adm':
+      D.adm={lbl:gv('adm_lbl'),title:gv('adm_title'),desc:gv('adm_desc'),f1:gv('adm_f1'),f2:gv('adm_f2'),f3:gv('adm_f3'),f4:gv('adm_f4'),f5:gv('adm_f5'),d1:gv('adm_d1'),d2:gv('adm_d2'),d3:gv('adm_d3'),d4:gv('adm_d4'),d5:gv('adm_d5')};
+      break;
+    case 'staff':
+      D.staff.lbl=gv('staff_lbl'); D.staff.title=gv('staff_title'); D.staff.desc=gv('staff_desc');
+      break;
+    case 'contact':
+      D.contact={lbl:gv('con_lbl'),title:gv('con_title'),desc:gv('con_desc'),addr:gv('con_addr'),p1:gv('con_p1'),p2:gv('con_p2'),e1:gv('con_e1'),e2:gv('con_e2'),h1:gv('con_h1'),h2:gv('con_h2'),fb:gv('con_fb'),tw:gv('con_tw'),wa:gv('con_wa'),yt:gv('con_yt')};
+      break;
+  }
+  persist(); toast(PTITLES[k]+' saved!');
+}
+
+function saveAll(){
+  ['logo','hero','about','acad','adm','staff','contact'].forEach(save);
+  saveAnns(); saveFacs(); saveClubs(); saveNews();
+  toast('All sections saved!');
+}
+
+/* ── ANNOUNCEMENTS ── */
+function renderAnns(){
+  const g=$('annEd'); if(!g)return;
+  g.innerHTML='';
+  (D.ann && D.ann.items||[]).forEach((a,i)=>{
+    const d=document.createElement('div'); d.className='list-row';
+    d.style.gridTemplateColumns='1fr auto';
+    d.innerHTML=`
+      <div>
+        <input class="atit" value="${esc(a.title)}" placeholder="Title" style="margin-bottom:.3rem;font-weight:600"/>
+        <textarea class="abod" placeholder="Body text" style="margin-top:.3rem">${esc(a.body)}</textarea>
+      </div>
+      <button onclick="removeAnn(${i})" class="btn btn-red btn-sm" style="align-self:start;margin-top:2px">✕</button>
+    `;
+    g.appendChild(d);
+  });
+  updateDash();
+}
+function addAnn(){
+  if(!D.ann) D.ann={items:[]};
+  D.ann.items.push({title:'New Announcement',body:'Details here...'});
+  renderAnns();
+}
+function removeAnn(i){ D.ann.items.splice(i,1); renderAnns(); }
+function saveAnns(){
+  if(!D.ann) D.ann={items:[]};
+  D.ann.items=[];
+  document.querySelectorAll('#annEd .list-row').forEach(r=>{
+    D.ann.items.push({title:r.querySelector('.atit').value, body:r.querySelector('.abod').value});
+  });
+  persist(); toast('Announcements saved!'); updateDash();
+}
+
+/* ── FACILITIES ── */
+function renderFacs(){
+  const g=$('facEd'); if(!g)return; g.innerHTML='';
+  (D.fac && D.fac.items||[]).forEach((f,i)=>{
+    const d=document.createElement('div'); d.className='list-row';
+    d.style.gridTemplateColumns='46px 1fr 2fr auto';
+    d.style.alignItems='center';
+    d.innerHTML=`
+      <input class="fi" value="${esc(f.ico)}" style="text-align:center;font-size:1.2rem;padding:6px 4px" title="Emoji"/>
+      <input class="fn" value="${esc(f.n)}" placeholder="Name"/>
+      <input class="fd" value="${esc(f.d)}" placeholder="Description"/>
+      <button onclick="removeFac(${i})" class="btn btn-red btn-sm">✕</button>
+    `;
+    g.appendChild(d);
+  });
+}
+function addFac(){ if(!D.fac)D.fac={items:[]}; D.fac.items.push({ico:'🏢',n:'New Facility',d:'Description'}); renderFacs(); }
+function removeFac(i){ D.fac.items.splice(i,1); renderFacs(); }
+function saveFacs(){
+  D.fac.lbl=gv('fac_lbl'); D.fac.title=gv('fac_title'); D.fac.desc=gv('fac_desc');
+  D.fac.items=[];
+  document.querySelectorAll('#facEd .list-row').forEach(r=>{
+    D.fac.items.push({ico:r.querySelector('.fi').value, n:r.querySelector('.fn').value, d:r.querySelector('.fd').value});
+  });
+  persist(); toast('Facilities saved!');
+}
+
+/* ── CO-CURRICULAR ── */
+function renderClubs(){
+  const g=$('coEd'); if(!g)return; g.innerHTML='';
+  (D.co && D.co.items||[]).forEach((c,i)=>{
+    const d=document.createElement('div'); d.className='list-row';
+    d.style.gridTemplateColumns='46px 1fr 2fr auto';
+    d.style.alignItems='center';
+    d.innerHTML=`
+      <input class="ci" value="${esc(c.ico)}" style="text-align:center;font-size:1.2rem;padding:6px 4px" title="Emoji"/>
+      <input class="cn" value="${esc(c.n)}" placeholder="Activity name"/>
+      <input class="cd" value="${esc(c.d)}" placeholder="Description"/>
+      <button onclick="removeClub(${i})" class="btn btn-red btn-sm">✕</button>
+    `;
+    g.appendChild(d);
+  });
+}
+function addClub(){ if(!D.co)D.co={items:[]}; D.co.items.push({ico:'⭐',n:'New Activity',d:'Description'}); renderClubs(); }
+function removeClub(i){ D.co.items.splice(i,1); renderClubs(); }
+function saveClubs(){
+  D.co.lbl=gv('co_lbl'); D.co.title=gv('co_title'); D.co.desc=gv('co_desc');
+  D.co.items=[];
+  document.querySelectorAll('#coEd .list-row').forEach(r=>{
+    D.co.items.push({ico:r.querySelector('.ci').value, n:r.querySelector('.cn').value, d:r.querySelector('.cd').value});
+  });
+  persist(); toast('Activities saved!');
+}
+
+/* ── STAFF ── */
+function renderStaff(){
+  const g=$('staffGrid'); if(!g)return; g.innerHTML='';
+  (D.staff && D.staff.members||[]).forEach((m,i)=>{
+    const div=document.createElement('div'); div.className='sc';
+    const ph=m.photo
+      ? `<div class="sc-photo"><img src="${m.photo}" alt="${esc(m.name)}"/></div>`
+      : `<div class="sc-photo" style="color:#fff">${m.emoji||'👩‍🏫'}</div>`;
+    div.innerHTML=`
+      <button class="sc-del" onclick="delStaff(${i})" title="Remove">✕</button>
+      ${ph}
+      <h4>${esc(m.name)}</h4>
+      <div class="role">${esc(m.role)}</div>
+      <div class="subj">${esc(m.subj)}</div>
+      <div class="sc-actions">
+        <label class="photo-label">
+          📷 Photo
+          <input type="file" accept="image/*" onchange="updateStaffPhoto(event,${i})"/>
+        </label>
+      </div>
+    `;
+    g.appendChild(div);
+  });
+  updateDash();
+}
+function openAddStaff(){
+  $('m_name').value=''; $('m_role').value=''; $('m_subj').value='';
+  $('m_emoji').value='👩‍🏫'; $('m_prev').style.display='none';
+  _newPhoto=null;
+  openModal('staffModal');
+}
+function previewNewStaff(ev){
+  const file=ev.target.files && ev.target.files[0]; ev.target.value='';
+  if(!file)return;
+  toast('Processing…',true);
+  compressImg(file,400,400,0.75).then(d=>{
+    _newPhoto=d;
+    const p=$('m_prev'); p.src=d; p.style.display='block';
+    toast('Photo ready ✓');
+  }).catch(e=>toast('Photo error: '+e,false));
+}
+function confirmAddStaff(){
+  const name=gv('m_name').trim();
+  if(!name){toast('Name is required',false);return;}
+  if(!D.staff) D.staff={members:[]};
+  D.staff.members.push({name,role:gv('m_role'),subj:gv('m_subj'),emoji:gv('m_emoji')||'👩‍🏫',photo:_newPhoto});
+  persist(); closeModal('staffModal'); renderStaff(); toast('Member added!');
+}
+function delStaff(i){
+  if(!confirm('Remove this staff member?'))return;
+  D.staff.members.splice(i,1); persist(); renderStaff(); toast('Removed');
+}
+function updateStaffPhoto(ev,i){
+  const file=ev.target.files && ev.target.files[0]; ev.target.value='';
+  if(!file)return;
+  toast('Processing…',true);
+  compressImg(file,400,400,0.75).then(d=>{
+    D.staff.members[i].photo=d; persist(); renderStaff(); toast('Photo updated ✓');
+  }).catch(e=>toast('Photo error: '+e,false));
+}
+
+/* ── NEWS ── */
+function renderNews(){
+  // Articles list
+  const ng=$('newsGrid'); if(ng){
+    ng.innerHTML='';
+    (D.news && D.news.items||[]).forEach((n,i)=>{
+      const d=document.createElement('div');
+      d.style.cssText='background:var(--bg);border:1px solid var(--bdr);border-radius:9px;padding:.7rem;margin-bottom:.5rem;display:flex;gap:.7rem;align-items:flex-start';
+      d.innerHTML=`
+        <div style="font-size:1.5rem;width:38px;height:38px;background:var(--goldp);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0">${n.emoji||'📰'}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:11px;color:var(--g3);text-transform:uppercase;letter-spacing:.8px;font-weight:700">${esc(n.tag)}</div>
+          <div style="font-size:13px;font-weight:600;color:var(--txt);margin:2px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(n.title)}</div>
+          <div style="font-size:11px;color:var(--muted)">📅 ${esc(n.date)}</div>
+        </div>
+        <button onclick="delNews(${i})" class="btn btn-red btn-sm" style="flex-shrink:0">✕</button>
+      `;
+      ng.appendChild(d);
+    });
+    updateDash();
+  }
+  // Events editor
+  const eg=$('evEd'); if(eg){
+    eg.innerHTML='';
+    (D.news && D.news.events||[]).forEach((ev,i)=>{
+      const d=document.createElement('div'); d.className='list-row';
+      d.style.gridTemplateColumns='52px 52px 1fr 2fr auto';
+      d.style.alignItems='center';
+      d.innerHTML=`
+        <input class="eday" value="${esc(ev.day)}" placeholder="Day" style="text-align:center"/>
+        <input class="emon" value="${esc(ev.month)}" placeholder="Mon" style="text-align:center"/>
+        <input class="etit" value="${esc(ev.title)}" placeholder="Event title"/>
+        <input class="edsc" value="${esc(ev.desc)}" placeholder="Description"/>
+        <button onclick="removeEvent(${i})" class="btn btn-red btn-sm">✕</button>
+      `;
+      eg.appendChild(d);
+    });
+  }
+}
+function openAddNews(){
+  $('mn_tag').value=''; $('mn_title').value=''; $('mn_body').value='';
+  $('mn_date').value=''; $('mn_emoji').value='📰';
+  openModal('newsModal');
+}
+function confirmAddNews(){
+  const t=gv('mn_title').trim();
+  if(!t){toast('Headline required',false);return;}
+  if(!D.news) D.news={items:[],events:[]};
+  D.news.items.unshift({tag:gv('mn_tag')||'News',title:t,body:gv('mn_body'),date:gv('mn_date'),emoji:gv('mn_emoji')||'📰'});
+  persist(); closeModal('newsModal'); renderNews(); toast('Article added!');
+}
+function delNews(i){ D.news.items.splice(i,1); persist(); renderNews(); toast('Removed'); }
+function addEvent(){
+  if(!D.news) D.news={items:[],events:[]};
+  D.news.events.push({day:'1',month:'Jan',title:'New Event',desc:'Event description'});
+  renderNews();
+}
+function removeEvent(i){ D.news.events.splice(i,1); renderNews(); }
+function saveNews(){
+  D.news.lbl=gv('news_lbl'); D.news.title=gv('news_title');
+  D.news.events=[];
+  document.querySelectorAll('#evEd .list-row').forEach(r=>{
+    D.news.events.push({day:r.querySelector('.eday').value,month:r.querySelector('.emon').value,title:r.querySelector('.etit').value,desc:r.querySelector('.edsc').value});
+  });
+  persist(); toast('News & Events saved!');
+}
+
+/* ── DASHBOARD ── */
+function updateDash(){
+  const sn=$('d_students'); if(sn && D.hero) sn.textContent=D.hero.s2n||'800+';
+  const sf=$('d_staff'); if(sf && D.staff) sf.textContent=(D.staff.members||[]).length;
+  const sna=$('d_news'); if(sna && D.news) sna.textContent=(D.news.items||[]).length;
+  const sa=$('d_ann'); if(sa && D.ann) sa.textContent=(D.ann.items||[]).length;
+}
+
+/* ── EXPORT / IMPORT ── */
+function exportData(){
+  const b=new Blob([JSON.stringify(D,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(b);
+  a.download='kasikeu_backup_'+new Date().toISOString().slice(0,10)+'.json';
+  a.click(); toast('Data exported!');
+}
+function importClick(){ $('importFile').click(); }
+function doImport(ev){
+  const f=ev.target.files && ev.target.files[0]; ev.target.value='';
+  if(!f)return;
+  const r=new FileReader();
+  r.onload=e=>{
+    try{
+      D=JSON.parse(e.target.result);
+      persist(); fillAll();
+      toast('Data imported successfully!');
+    } catch(err){ toast('Import failed: invalid file',false); }
+  };
+  r.readAsText(f);
+}
+
+/* ── RESET ── */
+function resetData(){
+  if(!confirm('Reset ALL content to defaults? This cannot be undone.'))return;
+  D=JSON.parse(JSON.stringify(DEF));
+  persist(); fillAll(); toast('Reset complete');
+}
+
+/* ── INIT ── */
+(function init(){
+  let saved=null;
+  try{ saved=localStorage.getItem(KEY); }catch(e){}
+  if(saved){
+    try{ D=JSON.parse(saved); }catch(e){ D={}; }
+  }
+  // Merge missing top-level keys from defaults
+  Object.keys(DEF).forEach(k=>{
+    if(D[k]===undefined||D[k]===null) D[k]=JSON.parse(JSON.stringify(DEF[k]));
+    else if(typeof DEF[k]==='object'&&!Array.isArray(DEF[k])&&DEF[k]!==null){
+      Object.keys(DEF[k]).forEach(kk=>{ if(D[k][kk]===undefined) D[k][kk]=DEF[k][kk]; });
+    }
+  });
+  fillAll();
+})();
+</script>
+</body>
+</html>

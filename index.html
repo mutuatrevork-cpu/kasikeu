@@ -718,14 +718,82 @@ function checkDesk(){
 checkDesk();
 window.addEventListener('resize',checkDesk);
 
+/* ══ DEFAULT DATA (mirrors admin defaults) ══ */
+const DEFAULTS={
+  logo:{name:'Kasikeu Girls Secondary',tag:'Excellence · Discipline · Leadership',letter:'K',fname:'Kasikeu Girls',fsub:'Secondary School',fdesc:'Nurturing excellence, character, and leadership in young women since 1982.',copy:'© 2025 Kasikeu Girls Secondary School. All rights reserved.'},
+  logo_img:null, hero_bg:null, about_photo:null,
+  hero:{badge:'Est. 1982 · Kasikeu, Makueni County',title:'Shaping the *Leaders* of Tomorrow',sub:'Nurturing young women in knowledge, character & purpose',desc:'Kasikeu Girls Secondary School is a centre of academic excellence committed to holistic development through rigorous academics, strong values, and transformative experiences in the heart of Makueni County, Kenya.',btn1:'Apply for Admission',btn2:'Explore Our School',s1n:'40+',s1l:'Years of Excellence',s2n:'800+',s2l:'Current Students',s3n:'97%',s3l:'KCSE Pass Rate',s4n:'65+',s4l:'Qualified Staff'},
+  about:{lbl:'About Our School',title:'A Legacy of *Excellence* Since 1982',desc:'Kasikeu Girls Secondary School was founded in 1982 by the community of Kasikeu in Makueni County with a vision to provide quality education to girls in the region. Over four decades, we have grown into one of the most respected secondary schools in Makueni County, Kenya.',mission:'"To provide a holistic, quality education that nurtures academic excellence, moral integrity, and leadership in young women, preparing them to positively contribute to society."',desc2:'We believe every girl deserves an education that builds resilience, critical thinking, confidence, and a deep sense of purpose.',b1n:'40+',b1l:'Years Strong',b2n:'A',b2l:'School Rating',b3n:'800+',b3l:'Students',b4n:'65+',b4l:'Staff'},
+  acad:{lbl:'Academic Programs',title:'A Curriculum Built for *Success*',desc:'Our program follows the KICD curriculum, offering a broad and balanced education from Form 1 through Form 4, leading to the KCSE national examination.',rt:'Outstanding 2024 KCSE Results 🏆',rd:'We are proud of our Form 4 class of 2024.',r1n:'B',r1l:'Mean Grade',r2n:'97%',r2l:'Pass Rate',r3n:'23',r3l:'A Students',r4n:'Top 5',r4l:'Makueni'},
+  fac:{lbl:'Our Facilities',title:'Spaces Designed to *Inspire*',desc:'Our campus is equipped with modern facilities creating an environment where learning flourishes.',items:[
+    {ico:'🔬',n:'Science Laboratories',d:'Biology, Chemistry & Physics labs with modern apparatus.'},
+    {ico:'📚',n:'Library & Resource Centre',d:'Over 10,000 books, periodicals, and digital resources.'},
+    {ico:'💻',n:'Computer Laboratory',d:'40-station lab with internet for ICT studies.'},
+    {ico:'🍽️',n:'Modern Dining Hall',d:'Spacious, hygienic facility serving balanced meals daily.'},
+    {ico:'🏃',n:'Sports Grounds',d:'Athletics track, volleyball, basketball, football & netball.'},
+    {ico:'🏠',n:'Student Dormitories',d:'Secure boarding facilities with 24-hour supervision.'},
+    {ico:'⚕️',n:'Medical Centre',d:'On-site clinic with a qualified nurse.'},
+    {ico:'🎭',n:'Assembly Hall',d:'Large multi-purpose hall for assemblies and events.'}
+  ]},
+  co:{lbl:'Co-Curricular Activities',title:'Beyond the Classroom: *Grow Every Day*',desc:'Education extends far beyond academics. Our rich program helps students develop leadership and talent.',items:[
+    {ico:'🏐',n:'Sports & Athletics',d:'Volleyball, netball, football, basketball, and athletics.'},
+    {ico:'🎭',n:'Drama & Performing Arts',d:'Annual Drama Festival participants.'},
+    {ico:'🎵',n:'Music & Choir',d:'Vibrant choir that has won multiple county competitions.'},
+    {ico:'🔭',n:'Science & Technology',d:'Research projects and innovation challenges.'},
+    {ico:'📰',n:'Journalism & Debate',d:'School magazine and public speaking competitions.'},
+    {ico:'🌱',n:'Environment & Agriculture',d:'Farm projects and the Young Farmers Society.'},
+    {ico:'✝️',n:'Religious Clubs',d:'Christian Union, Muslim Students Association, and faith groups.'},
+    {ico:'🩺',n:'Health & Wellness',d:'Wellness campaigns and peer counselling.'},
+    {ico:'🤝',n:'Community Service',d:'Outreach programs, charity drives, and clean-up initiatives.'}
+  ]},
+  adm:{lbl:'Join Our School',title:'Admissions *Open* — Form 1, 2025',desc:'We welcome applications from bright, motivated young women.',f1:'KES 12,000/term',f2:'KES 18,000/term',f3:'KES 3,500/year',f4:'KES 2,000 (once)',f5:'~KES 8,000',d1:'1 Jan 2025',d2:'31 Jan 2025',d3:'Feb 10–14',d4:'20 Feb 2025',d5:'3 Mar 2025'},
+  staff:{lbl:'Our Team',title:'Dedicated *Educators* & Leaders',desc:'Our school is led by experienced, passionate, highly qualified professionals.',members:[
+    {name:'Mrs. Grace Mutua',role:'Principal',subj:'B.Ed (Science) · M.Ed Administration',emoji:'👩‍💼',photo:null},
+    {name:'Mr. Peter Kioko',role:'Deputy Principal — Academics',subj:'B.Ed (Mathematics)',emoji:'👨‍🏫',photo:null},
+    {name:'Mrs. Susan Mwithia',role:'Deputy Principal — Admin',subj:'B.Ed (Arts)',emoji:'👩‍🏫',photo:null},
+    {name:'Ms. Caroline Ndolo',role:'Head of Sciences',subj:'B.Sc Chemistry & Biology',emoji:'👩‍🔬',photo:null},
+    {name:'Mr. James Mwangangi',role:'Head of Maths & ICT',subj:'B.Ed Mathematics & Computer',emoji:'👨‍💻',photo:null},
+    {name:'Ms. Faith Kyalo',role:'Head of Languages',subj:'B.A. English & Literature',emoji:'👩‍🎨',photo:null},
+    {name:'Mr. David Mutisya',role:'Senior Counsellor',subj:'B.Ed · Diploma in Counselling',emoji:'👨‍⚕️',photo:null},
+    {name:'Ms. Agnes Munyao',role:'Head of Sports & P.E.',subj:'B.Ed Physical Education',emoji:'👩‍🏃',photo:null}
+  ]},
+  news:{lbl:'News & Events',title:'Happenings at *Kasikeu Girls*',items:[
+    {tag:'Achievement',title:'Kasikeu Girls Wins Makueni County Science Congress 2024',body:'Our Form 3 Biology and Chemistry teams swept gold medals at the annual Makueni County Science Congress.',date:'March 15, 2025',emoji:'🏆'},
+    {tag:'Academics',title:'2024 KCSE Top Students Celebrated at Prize-Giving',body:"Our Form 4 class achieved the school's best-ever KCSE results with a mean grade of B Plain.",date:'February 12, 2025',emoji:'📝'},
+    {tag:'Events',title:'Drama Club Takes Silver at National Drama Festival',body:'Our drama team clinched silver in the Set Book category at the Kenya National Drama Festival.',date:'January 28, 2025',emoji:'🎭'}
+  ],events:[
+    {day:'28',month:'Apr',title:'Term 2 Opening Day',desc:'All students report by 7:00 AM with full requirements.'},
+    {day:'12',month:'May',title:'Inter-School Athletics',desc:'Zone 4 Athletics Competition at Kasikeu Grounds.'},
+    {day:'2',month:'Jun',title:"Parents' Open Day",desc:'Annual parents meeting and student exhibitions.'},
+    {day:'14',month:'Jun',title:'Music & Cultural Festival',desc:'Annual cultural day with music, poetry and drama.'},
+    {day:'25',month:'Jul',title:'Form 4 Mock Examinations',desc:'Mock exams begin for all Form 4 candidates.'},
+    {day:'1',month:'Aug',title:'End of Term 2',desc:'Closing assembly and prize-giving ceremony.'}
+  ]},
+  contact:{lbl:'Get In Touch',title:'Contact *Us*',desc:'Our doors are always open for prospective parents, students, alumni, and community partners.',addr:'Kasikeu Girls Secondary School\nKasikeu, Kibwezi West Sub-County\nMakueni County, Kenya',p1:'+254 712 345 678',p2:'+254 722 987 654',e1:'info@kasikeugirlssecondary.ac.ke',e2:'admissions@kasikeugirlssecondary.ac.ke',h1:'Monday – Friday: 7:00 AM – 5:00 PM',h2:'Saturday: 8:00 AM – 12:00 PM (Term time only)',fb:'#',tw:'#',wa:'#',yt:'#'},
+  ann:{items:[
+    {title:'Form 1 Admissions Open',body:'Applications for Form 1 (2025) now open. Collect forms from the school office.'},
+    {title:'KCSE 2024 Results',body:'Mean Grade: B (Plain) — our best ever! Congratulations to Form 4 Class of 2024.'},
+    {title:'Term 2 Opening',body:'Monday 28 April 2025. All students to report by 7:00 AM.'}
+  ]}
+};
+
 /* ══ LOAD FROM ADMIN ══ */
 function load(){
   let raw=null;
   try{ raw=localStorage.getItem(KEY); }catch(e){}
-  if(!raw){ initReveal(); return; } // no admin data yet, use HTML defaults
 
-  let D={};
-  try{ D=JSON.parse(raw); }catch(e){ initReveal(); return; }
+  let D=DEFAULTS;
+  if(raw){
+    try{
+      const saved=JSON.parse(raw);
+      // Merge saved over defaults so missing keys still have values
+      D={};
+      Object.keys(DEFAULTS).forEach(k=>{
+        if(saved[k]!==undefined && saved[k]!==null) D[k]=saved[k];
+        else D[k]=DEFAULTS[k];
+      });
+    }catch(e){ D=DEFAULTS; }
+  }
 
   /* LOGO */
   const L=D.logo||{};

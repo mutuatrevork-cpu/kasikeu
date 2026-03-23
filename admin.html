@@ -7,9 +7,9 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet"/>
 <style>
 :root{
-  --g:#0a1f6e;--g2:#1a3494;--g3:#2a4db8;
-  --gold:#f0c030;--gold2:#f7d96a;--goldp:#fdf3cc;
-  --bg:#f0f2ff;--white:#fff;--red:#e53e3e;
+  --g:#0000CC;--g2:#2222FF;--g3:#4444FF;
+  --gold:#ffffff;--gold2:#ccd9ff;--goldp:#e6eeff;
+  --bg:#f0f0ff;--white:#fff;--red:#e53e3e;
   --bdr:#dde1e7;--txt:#1a202c;--muted:#64748b;
   --SB:250px;--TB:54px;
 }
@@ -36,7 +36,7 @@ img{display:block;max-width:100%;}
 .sb-hd{font-size:8.5px;text-transform:uppercase;letter-spacing:2px;color:rgba(255,255,255,.28);padding:.6rem 1rem .1rem;font-weight:700;}
 .sb-btn{display:flex;align-items:center;gap:8px;padding:.55rem 1rem;color:rgba(255,255,255,.7);font-size:12.5px;font-weight:500;border:none;background:none;width:100%;text-align:left;border-left:3px solid transparent;white-space:nowrap;transition:all .14s;}
 .sb-btn:hover{color:#fff;background:rgba(255,255,255,.06);}
-.sb-btn.on{color:#fff;background:rgba(200,168,75,.2);border-left-color:var(--gold);}
+.sb-btn.on{color:#fff;background:rgba(68,68,255,.2);border-left-color:var(--gold);}
 .sb-btn .ic{width:16px;text-align:center;font-size:13px;flex-shrink:0;}
 .sb-ft{padding:.6rem 1rem;border-top:1px solid rgba(255,255,255,.09);font-size:10.5px;color:rgba(255,255,255,.3);flex-shrink:0;}
 .sb-ft a{color:var(--gold2);font-weight:600;}
@@ -95,7 +95,7 @@ img{display:block;max-width:100%;}
   width:100%;padding:9px 11px;border:1.5px solid var(--bdr);border-radius:7px;
   color:var(--txt);background:var(--white);outline:none;transition:.18s;
 }
-.fg input:focus,.fg textarea:focus,.fg select:focus{border-color:var(--g3);box-shadow:0 0 0 3px rgba(37,53,200,.1);}
+.fg input:focus,.fg textarea:focus,.fg select:focus{border-color:var(--g3);box-shadow:0 0 0 3px rgba(68,68,255,.1);}
 .fg textarea{resize:vertical;min-height:72px;}
 .r2{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;}
 .r3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.6rem;}
@@ -680,7 +680,7 @@ const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replac
 function toast(msg, ok=true){
   const t=$('TOAST');
   t.textContent = (ok?'✅ ':'❌ ')+msg;
-  t.style.background = ok ? '#0a1f6e' : '#e53e3e';
+  t.style.background = ok ? '#0000CC' : '#e53e3e';
   t.classList.add('on');
   clearTimeout(t._t);
   t._t = setTimeout(()=>t.classList.remove('on'), 2800);

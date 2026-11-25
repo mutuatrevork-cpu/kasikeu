@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Get to know Kasikeu Girls and the milestones that shaped our school in Mukaa, Makueni County.">
-  <meta name="theme-color" content="#122343">
+  <meta name="theme-color" content="#1746a2">
   <title>Our school and history | Kasikeu Girls Secondary School</title>
   <link rel="stylesheet" href="styles.css">
   <script src="content.js" defer></script>
@@ -75,20 +75,41 @@
     </section>
     <div class="wrap section updates" id="school-team" hidden></div>
   </main>
-  <footer>
-    <div class="wrap footer-inner detailed-footer">
-      <div>
-        <strong id="footer-name">Kasikeu Girls Secondary School</strong>
+  <footer class="school-footer" aria-label="School information and links">
+    <div class="wrap footer-grid">
+      <section class="footer-identity" aria-label="Kasikeu Girls Secondary School">
+        <a class="footer-brand" href="index.html">
+          <span class="footer-mark" id="footer-mark" aria-hidden="true">K</span>
+          <span id="footer-name">Kasikeu Girls Secondary School</span>
+        </a>
         <p id="footer-subtitle" hidden></p>
         <p id="footer-description">Mukaa Sub-County · Makueni County, Kenya</p>
-      </div>
-      <nav aria-label="Explore the school"><strong>Explore the school</strong>
-        <a href="about.html">Our history</a><a href="academics.html">Academics and results</a><a href="school-life.html">Boarding and activities</a>
+        <p class="footer-school-type">Public girls’ boarding senior school <span aria-hidden="true">·</span> C3</p>
+      </section>
+      <nav aria-labelledby="footer-discover">
+        <h2 class="footer-heading" id="footer-discover">Discover Kasikeu</h2>
+        <a href="about.html">Our school and history</a>
+        <a href="academics.html">Academic pathways</a>
+        <a href="academics.html#performance">KCSE results archive</a>
+        <a href="school-life.html">Boarding and activities</a>
       </nav>
-      <nav aria-label="Family links"><strong>For families</strong>
-        <a href="joining.html">Joining and reporting</a><a href="resources.html">Learning resources</a><a href="visit.html">Campus map and directions</a>
+      <nav aria-labelledby="footer-families">
+        <h2 class="footer-heading" id="footer-families">For learners and families</h2>
+        <a href="joining.html">Joining and reporting</a>
+        <a href="joining.html#checklist">Reporting checklist</a>
+        <a href="joining.html#fees">Fees and bursaries</a>
+        <a href="resources.html">Learning resources</a>
       </nav>
-      <small id="footer-copy">Kasikeu Girls Secondary School</small>
+      <section class="footer-visit" aria-labelledby="footer-visit">
+        <h2 class="footer-heading" id="footer-visit">Visit our school</h2>
+        <address id="footer-campus-address">Kasikeu, Mukaa Sub-County<br>Makueni County, Kenya</address>
+        <div id="footer-contact-details" hidden></div>
+        <a href="visit.html">Campus map and directions <span aria-hidden="true">↗</span></a>
+      </section>
+    </div>
+    <div class="wrap footer-base">
+      <small>© <time datetime="2026">2026</time> <span id="footer-copy">Kasikeu Girls Secondary School</span></small>
+      <a href="#main">Back to top <span aria-hidden="true">↑</span></a>
     </div>
   </footer>
 </body>

@@ -32,6 +32,17 @@ function addLink(container, value, type) {
   }
 }
 
+function renderContactDetails(container, contact, includeExtras = false) {
+  if (!container) return;
+  for (const number of [contact.p1, contact.p2]) addLink(container, number, 'tel');
+  for (const email of [contact.e1, contact.e2]) addLink(container, email, 'email');
+  if (includeExtras) {
+    for (const social of [contact.fb, contact.tw, contact.wa, contact.yt]) addLink(container, social, 'web');
+    for (const hours of [contact.h1, contact.h2]) if (hours) container.append(make('p', hours));
+  }
+  container.hidden = !container.childElementCount;
+}
+
 function renderGroup(container, title, description, items) {
   if (!container || !items.length) return;
   const section = make('section', '', 'update-group');
@@ -73,7 +84,8 @@ function renderSchool(data) {
     'admissions-label': adm.lbl, 'admissions-title': adm.title, 'admissions-description': adm.desc,
     'contact-label': contact.lbl, 'contact-title': contact.title, 'contact-address': contact.addr,
     'contact-description': contact.desc, 'footer-name': logo.fname, 'footer-description': logo.fdesc,
-    'footer-copy': logo.copy, 'footer-subtitle': logo.fsub
+    'footer-copy': logo.copy, 'footer-subtitle': logo.fsub,
+    'footer-mark': logo.letter, 'footer-campus-address': contact.addr
   })) {
     setText(id, value);
   }
@@ -90,10 +102,12 @@ function renderSchool(data) {
   if (about.desc2) get('about-description')?.after(make('p', about.desc2, 'intro'));
   const logoSource = imageSource(data.logo_img);
   if (logoSource) {
-    const image = make('img');
-    image.src = logoSource;
-    image.alt = '';
-    get('school-mark').replaceChildren(image);
+    for (const mark of [get('school-mark'), get('footer-mark')]) {
+      const image = make('img');
+      image.src = logoSource;
+      image.alt = '';
+      mark?.replaceChildren(image);
+    }
   }
   const heroSource = imageSource(data.hero_bg);
   const visual = document.querySelector('.hero-visual');
@@ -109,14 +123,8 @@ function renderSchool(data) {
     aboutNote.hidden = false;
   }
 
-  const details = get('contact-details');
-  if (details) {
-    for (const number of [contact.p1, contact.p2]) addLink(details, number, 'tel');
-    for (const email of [contact.e1, contact.e2]) addLink(details, email, 'email');
-    for (const social of [contact.fb, contact.tw, contact.wa, contact.yt]) addLink(details, social, 'web');
-    for (const hours of [contact.h1, contact.h2]) if (hours) details.append(make('p', hours));
-    details.hidden = !details.childElementCount;
-  }
+  renderContactDetails(get('contact-details'), contact, true);
+  renderContactDetails(get('footer-contact-details'), contact);
 
   const updates = get('school-updates');
   renderGroup(updates, 'Announcements', '', data.ann.items.map(a => [a.title, a.body]));

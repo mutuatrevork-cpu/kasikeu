@@ -1,5 +1,7 @@
 # Kasikeu Girls Secondary School
 
+The public site includes dedicated pages for school history, academics and results, boarding and activities, joining and reporting, learning resources, and visiting the campus. Each page is directly addressable and uses the same stylesheet and content settings.
+
 The public site is plain HTML, CSS and JavaScript. No build command or dependencies are required.
 
 ## Preview locally
@@ -25,7 +27,9 @@ Only include material approved for public release. The admin page is a static ed
 - [Published historical KCSE results](https://shulezote.co.ke/school/kasikeu-girls-sec-sch/kcse/)
 - [2019 national secondary school drama festival programme](https://teacher.co.ke/amp/2019-national-drama-festivals-program-for-secondary-schools/) and [March 2026 Makueni sports programme](https://www.scribd.com/document/1009717700/Final-Programe)
 - [School location and coordinates](https://www.shulezote.co.ke/school/kasikeu-girls-sec-sch/#location). The embedded map uses OpenStreetMap.
+- [KICD curriculum designs and approved materials](https://kicd.ac.ke/cbc-materials/)
+- [KNEC timetables and instructions](https://www.knec.ac.ke/timetables/)
 
 The two images included with the public site are generated illustrations. The site labels them and links to NURU’s school gallery for documentary photos. Replace the imagery with approved school photos when available.
 
-The public defaults omit school fees, reporting dates, staff details, and direct contact details pending confirmation from the school. Update the pathway cards in `index.html` if official combinations change.
+The public defaults omit school fees, reporting dates, staff details, and direct contact details pending confirmation from the school. Update the pathway cards in `academics.html` if official combinations change.

@@ -1,7 +1,8 @@
 const get = id => document.getElementById(id);
 
 function setText(id, value) {
-  if (value) get(id).textContent = value.replaceAll('*', '');
+  const element = get(id);
+  if (element && value) element.textContent = value.replaceAll('*', '');
 }
 
 function make(tag, value, className) {
@@ -32,7 +33,7 @@ function addLink(container, value, type) {
 }
 
 function renderGroup(container, title, description, items) {
-  if (!items.length) return;
+  if (!container || !items.length) return;
   const section = make('section', '', 'update-group');
   section.append(make('h2', title.replaceAll('*', '')));
   if (description) section.append(make('p', description, 'intro'));
@@ -61,7 +62,7 @@ function renderGroup(container, title, description, items) {
 function renderSchool(data) {
   const {logo, hero, about, acad, adm, contact} = data;
   const [first, emphasis, last] = hero.title.split('*', 3);
-  if (emphasis) get('hero-title').replaceChildren(first, make('em', emphasis), last || '');
+  if (emphasis) get('hero-title')?.replaceChildren(first, make('em', emphasis), last || '');
   else setText('hero-title', hero.title);
   for (const [id, value] of Object.entries({
     'school-name': logo.name, 'school-mark': logo.letter, 'school-tagline': logo.tag,
@@ -76,15 +77,17 @@ function renderSchool(data) {
   })) {
     setText(id, value);
   }
-  if (hero.btn1) get('hero-admissions').firstChild.textContent = hero.btn1 + ' ';
-  get('hero-subtitle').hidden = !hero.sub;
+  const heroButton = get('hero-admissions');
+  if (heroButton && hero.btn1) heroButton.firstChild.textContent = hero.btn1 + ' ';
+  const heroSubtitle = get('hero-subtitle');
+  if (heroSubtitle) heroSubtitle.hidden = !hero.sub;
   get('footer-subtitle').hidden = !logo.fsub;
-  if (about.mission) {
-    setText('about-note-title', 'Our mission');
+  const aboutNote = get('about-note');
+  if (aboutNote && about.mission) {
     setText('about-note-text', about.mission);
-    get('about-note').hidden = false;
+    aboutNote.hidden = false;
   }
-  if (about.desc2) get('about-description').after(make('p', about.desc2, 'intro'));
+  if (about.desc2) get('about-description')?.after(make('p', about.desc2, 'intro'));
   const logoSource = imageSource(data.logo_img);
   if (logoSource) {
     const image = make('img');
@@ -93,40 +96,43 @@ function renderSchool(data) {
     get('school-mark').replaceChildren(image);
   }
   const heroSource = imageSource(data.hero_bg);
-  if (heroSource) {
-    const visual = document.querySelector('.hero-visual');
+  const visual = document.querySelector('.hero-visual');
+  if (heroSource && visual) {
     visual.querySelector('img').src = heroSource;
     visual.querySelector('img').alt = '';
     visual.querySelector('figcaption').hidden = true;
   }
   const aboutSource = imageSource(data.about_photo);
-  if (aboutSource) {
+  if (aboutNote && aboutSource) {
     get('about-photo').src = aboutSource;
     get('about-photo').hidden = false;
-    get('about-note').hidden = false;
+    aboutNote.hidden = false;
   }
 
   const details = get('contact-details');
-  for (const number of [contact.p1, contact.p2]) addLink(details, number, 'tel');
-  for (const email of [contact.e1, contact.e2]) addLink(details, email, 'email');
-  for (const social of [contact.fb, contact.tw, contact.wa, contact.yt]) addLink(details, social, 'web');
-  for (const hours of [contact.h1, contact.h2]) if (hours) details.append(make('p', hours));
-  details.hidden = !details.childElementCount;
+  if (details) {
+    for (const number of [contact.p1, contact.p2]) addLink(details, number, 'tel');
+    for (const email of [contact.e1, contact.e2]) addLink(details, email, 'email');
+    for (const social of [contact.fb, contact.tw, contact.wa, contact.yt]) addLink(details, social, 'web');
+    for (const hours of [contact.h1, contact.h2]) if (hours) details.append(make('p', hours));
+    details.hidden = !details.childElementCount;
+  }
 
   const updates = get('school-updates');
   renderGroup(updates, 'Announcements', '', data.ann.items.map(a => [a.title, a.body]));
   renderGroup(updates, data.news.title, '', data.news.items.map(n => [n.title, [n.date, n.body].filter(Boolean).join(' · ')]));
   renderGroup(updates, 'School calendar', '', data.news.events.map(e => [e.title, [e.day, e.month, e.desc].filter(Boolean).join(' ')]));
-  renderGroup(updates, data.fac.title, data.fac.desc, data.fac.items.map(f => [f.n, f.d]));
-  renderGroup(updates, data.co.title, data.co.desc, data.co.items.map(c => [c.n, c.d]));
-  renderGroup(updates, data.staff.title, data.staff.desc, data.staff.members.map(m => [m.name, [m.role, m.subj].filter(Boolean).join(' · '), m.photo]));
+  const lifeUpdates = get('school-life-updates');
+  renderGroup(lifeUpdates, data.fac.title, data.fac.desc, data.fac.items.map(f => [f.n, f.d]));
+  renderGroup(lifeUpdates, data.co.title, data.co.desc, data.co.items.map(c => [c.n, c.d]));
+  renderGroup(get('school-team'), data.staff.title, data.staff.desc, data.staff.members.map(m => [m.name, [m.role, m.subj].filter(Boolean).join(' · '), m.photo]));
 
   const admissionLabels = ['Tuition', 'Boarding', 'Activity levy', 'Admission fee', 'Uniform and books',
     'Applications open', 'Deadline', 'Interviews', 'Results', 'Reporting date'];
   const fields = [adm.f1, adm.f2, adm.f3, adm.f4, adm.f5, adm.d1, adm.d2, adm.d3, adm.d4, adm.d5];
   const localAdmissions = get('local-admissions');
   const rows = fields.flatMap((value, index) => value ? [make('dt', admissionLabels[index]), make('dd', value)] : []);
-  if (rows.length) {
+  if (localAdmissions && rows.length) {
     const list = make('dl');
     list.append(...rows);
     localAdmissions.append(make('h3', 'School notices for admissions'), list);
@@ -134,8 +140,8 @@ function renderSchool(data) {
   }
   renderFacts(get('hero-facts'), hero, 's');
   renderFacts(get('about-facts'), about, 'b');
-  if (acad.rt) {
-    const results = get('school-results');
+  const results = get('school-results');
+  if (acad.rt && results) {
     const figures = make('dl', '', 'extra-facts');
     renderFacts(figures, acad, 'r');
     results.append(make('h3', acad.rt), make('p', acad.rd), figures);
@@ -144,6 +150,7 @@ function renderSchool(data) {
 }
 
 function renderFacts(list, record, prefix) {
+  if (!list) return;
   for (let index = 1; index <= 4; index += 1) {
     const label = record[prefix + index + 'l'];
     const value = record[prefix + index + 'n'];
@@ -171,7 +178,7 @@ nav.addEventListener('click', event => {
   const link = event.target.closest('a');
   if (!link || !narrow.matches) return;
   setMenu(false);
-  const destination = link.hash && get(link.hash.slice(1));
+  const destination = link.pathname === location.pathname && link.hash && get(link.hash.slice(1));
   if (destination) {
     destination.tabIndex = -1;
     destination.focus({preventScroll: true});
@@ -190,6 +197,12 @@ async function loadSchool() {
   if (new URLSearchParams(location.search).get('preview') === '1') {
     const draft = readSchoolDraft();
     if (draft) renderSchool(mergeSchoolContent(draft));
+    for (const link of document.querySelectorAll('a[href$=".html"], a[href*=".html#"]')) {
+      const target = new URL(link.href);
+      if (target.origin !== location.origin) continue;
+      target.searchParams.set('preview', '1');
+      link.href = target.href;
+    }
     return;
   }
   if (location.protocol === 'file:') return;

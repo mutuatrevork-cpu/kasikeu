@@ -122,6 +122,8 @@ function renderSchool(data) {
   renderGroup(updates, 'Announcements', '', data.ann.items.map(a => [a.title, a.body]));
   renderGroup(updates, data.news.title, '', data.news.items.map(n => [n.title, [n.date, n.body].filter(Boolean).join(' · ')]));
   renderGroup(updates, 'School calendar', '', data.news.events.map(e => [e.title, [e.day, e.month, e.desc].filter(Boolean).join(' ')]));
+  const sampleNotice = get('sample-school-notice');
+  if (sampleNotice && updates && !updates.hidden) sampleNotice.hidden = true;
   const lifeUpdates = get('school-life-updates');
   renderGroup(lifeUpdates, data.fac.title, data.fac.desc, data.fac.items.map(f => [f.n, f.d]));
   renderGroup(lifeUpdates, data.co.title, data.co.desc, data.co.items.map(c => [c.n, c.d]));

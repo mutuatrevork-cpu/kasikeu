@@ -30,6 +30,8 @@ Only include material approved for public release. The admin page is a static ed
 - [KICD curriculum designs and approved materials](https://kicd.ac.ke/cbc-materials/)
 - [KNEC timetables and instructions](https://www.knec.ac.ke/timetables/)
 
-The two images included with the public site are generated illustrations. The site labels them and links to NURU’s school gallery for documentary photos. Replace the imagery with approved school photos when available.
+The homepage banners use two Lake Nakuru trip photos supplied for the site update. Other pages may use the existing labeled illustrations. The site also links to NURU’s school gallery.
+
+The homepage sample notice is intentionally labeled and disappears when school announcements, news, or events are published through the existing editor.
 
 The public defaults omit school fees, reporting dates, staff details, and direct contact details pending confirmation from the school. Update the pathway cards in `academics.html` if official combinations change.

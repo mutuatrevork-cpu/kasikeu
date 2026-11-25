@@ -7,7 +7,7 @@ const SCHOOL_DEFAULTS = {
     badge: 'Mukaa · Makueni County, Kenya',
     title: 'Kasikeu Girls *Secondary School*',
     sub: '',
-    desc: 'A public girls’ boarding school in Mukaa, Makueni County. Get to know our school, its history, and life beyond the classroom.',
+    desc: 'Welcome to Kasikeu Girls, a public girls’ boarding school in Mukaa, Makueni County. Explore our history, see what we study, and discover life beyond the classroom.',
     btn1: 'Explore our school',
     btn2: 'Find our campus',
     s1n: '', s1l: '', s2n: '', s2l: '', s3n: '', s3l: '', s4n: '', s4l: ''
@@ -15,13 +15,13 @@ const SCHOOL_DEFAULTS = {
   about: {
     lbl: 'Our history',
     title: 'Rooted in Kasikeu',
-    desc: 'Kasikeu Girls Secondary School is listed as Kasikeu Girls High School in the senior school register. The school serves girls in Mukaa Sub-County, Makueni County.',
+    desc: 'Our story is rooted in Kasikeu, where we have grown as a girls’ school in Mukaa Sub-County, Makueni County.',
     mission: '', desc2: '', b1n: '', b1l: '', b2n: '', b2l: '', b3n: '', b3l: '', b4n: '', b4l: ''
   },
   acad: {
     lbl: 'Senior school academics',
     title: 'Grade 10 subject combinations',
-    desc: 'Kasikeu Girls is listed with six subject combinations across STEM and Social Sciences.',
+    desc: 'We offer six Grade 10 subject combinations across our STEM and Social Sciences pathways.',
     rt: '', rd: '', r1n: '', r1l: '', r2n: '', r2l: '', r3n: '', r3l: '', r4n: '', r4l: ''
   },
   fac: {lbl: 'Facilities', title: 'Campus facilities', desc: '', items: []},
@@ -29,7 +29,7 @@ const SCHOOL_DEFAULTS = {
   adm: {
     lbl: 'Admissions',
     title: 'Joining Grade 10',
-    desc: 'Kenya’s Ministry of Education manages senior school selection and placement through KEMIS.',
+    desc: 'To join us in Grade 10, use the Ministry of Education’s KEMIS portal for senior school selection and placement. Search for Kasikeu Girls High School using our institution code, CV7S.',
     f1: '', f2: '', f3: '', f4: '', f5: '', d1: '', d2: '', d3: '', d4: '', d5: ''
   },
   staff: {lbl: 'Staff', title: 'Meet our staff', desc: '', members: []},

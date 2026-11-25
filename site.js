@@ -76,7 +76,7 @@ function renderSchool(data) {
   if (emphasis) get('hero-title')?.replaceChildren(first, make('em', emphasis), last || '');
   else setText('hero-title', hero.title);
   for (const [id, value] of Object.entries({
-    'school-name': logo.name, 'school-mark': logo.letter, 'school-tagline': logo.tag,
+    'school-name': logo.name, 'school-tagline': logo.tag,
     'hero-location': hero.badge, 'hero-description': hero.desc,
     'hero-academics': hero.btn2, 'hero-subtitle': hero.sub,
     'about-label': about.lbl, 'about-title': about.title, 'about-description': about.desc,
@@ -85,7 +85,7 @@ function renderSchool(data) {
     'contact-label': contact.lbl, 'contact-title': contact.title, 'contact-address': contact.addr,
     'contact-description': contact.desc, 'footer-name': logo.fname, 'footer-description': logo.fdesc,
     'footer-copy': logo.copy, 'footer-subtitle': logo.fsub,
-    'footer-mark': logo.letter, 'footer-campus-address': contact.addr
+    'footer-campus-address': contact.addr
   })) {
     setText(id, value);
   }
@@ -101,12 +101,15 @@ function renderSchool(data) {
   }
   if (about.desc2) get('about-description')?.after(make('p', about.desc2, 'intro'));
   const logoSource = imageSource(data.logo_img);
-  if (logoSource) {
-    for (const mark of [get('school-mark'), get('footer-mark')]) {
+  for (const id of ['school-mark', 'footer-mark']) {
+    const mark = get(id);
+    if (logoSource) {
       const image = make('img');
       image.src = logoSource;
       image.alt = '';
       mark?.replaceChildren(image);
+    } else if (!mark?.querySelector('img')) {
+      setText(id, logo.letter);
     }
   }
   const heroSource = imageSource(data.hero_bg);

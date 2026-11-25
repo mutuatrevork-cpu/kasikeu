@@ -207,9 +207,9 @@ async function loadSchool() {
   if (new URLSearchParams(location.search).get('preview') === '1') {
     const draft = readSchoolDraft();
     if (draft) renderSchool(mergeSchoolContent(draft));
-    for (const link of document.querySelectorAll('a[href$=".html"], a[href*=".html#"]')) {
+    for (const link of document.querySelectorAll('a[href^="/"]')) {
       const target = new URL(link.href);
-      if (target.origin !== location.origin) continue;
+      if (target.origin !== location.origin || !/^\/(?:about|academics|school-life|joining|resources|visit)?$/.test(target.pathname)) continue;
       target.searchParams.set('preview', '1');
       link.href = target.href;
     }

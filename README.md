@@ -2,11 +2,11 @@
 
 The public site includes dedicated pages for school history, academics and results, boarding and activities, joining and reporting, learning resources, and visiting the campus. Each page is directly addressable and uses the same stylesheet and content settings.
 
-The public site is plain HTML, CSS and JavaScript. No build command or dependencies are required.
+The public site is plain HTML, CSS and JavaScript. The build needs Node.js and has no package dependencies. Edit `site-header.html` or `site-footer.html` to update those sections across the public site. Individual pages keep their own main content.
 
 ## Preview locally
 
-Run `python -m http.server 8000` in this folder and open `http://localhost:8000/`. Serving the files over HTTP enables the public content file and the admin draft preview.
+Run `node build.mjs` to assemble the pages and assets in `dist/`. Vercel runs this command for each deployment. Use `vercel dev` in a linked project to preview the clean URLs locally. To inspect the generated HTML with a basic web server, run `python -m http.server 8000 --directory dist` and open a page by its HTML filename.
 
 ## Edit and publish content
 

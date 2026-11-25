@@ -236,3 +236,22 @@ nav a[aria-current="page"]:not(.button) { color: var(--royal-blue); text-decorat
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
 }
+.staff-directory { display: grid; gap: 1.25rem; }
+.staff-directory [hidden] { display: none; }
+.staff-leadership { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; }
+.staff-group { padding: clamp(1.25rem, 3vw, 2rem); border: 1px solid #dce3f1; border-radius: 1rem; background: #fff; }
+.staff-group h2 { margin: 0; }
+.staff-leader { background: #102c65; color: #fff; border-color: #102c65; }
+.staff-leader h2 { color: inherit; }
+.staff-profiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: .85rem; }
+.staff-profiles:not(:empty) { margin-top: 1rem; }
+.staff-profile { display: flex; align-items: center; gap: .85rem; padding: .85rem; border: 1px solid #dce3f1; border-radius: .7rem; background: #f5f8ff; color: #12284e; }
+.staff-profile img { width: 4.25rem; height: 4.25rem; border-radius: .55rem; object-fit: cover; flex: 0 0 auto; }
+.staff-profile h3 { margin: 0; }
+.staff-profile p { margin: .25rem 0 0; }
+.staff-empty { margin: 0; }
+.cms-body { white-space: pre-line; max-width: 70ch; }
+.cms-section img { display: block; max-width: min(100%, 42rem); max-height: 28rem; object-fit: contain; border-radius: .8rem; margin: 1rem 0; }
+@media (max-width: 40rem) {
+  .staff-leadership { grid-template-columns: 1fr; }
+}

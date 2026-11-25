@@ -70,6 +70,79 @@ function renderGroup(container, title, description, items) {
   container.hidden = false;
 }
 
+function renderStaffDirectory(staff) {
+  const directory = get('staff-directory');
+  if (!directory) return;
+  let count = 0;
+  for (const member of staff.members) {
+    if (typeof member.name !== 'string' || !member.name.trim()) continue;
+    const profiles = directory.querySelector(`[data-staff-tier="${staffTier(member)}"] .staff-profiles`);
+    const profile = make('article', '', 'staff-profile');
+    const src = imageSource(member.photo);
+    if (src) {
+      const photo = make('img');
+      photo.src = src;
+      photo.alt = '';
+      photo.width = 112;
+      photo.height = 112;
+      photo.loading = 'lazy';
+      profile.append(photo);
+    }
+    const details = make('div');
+    details.append(make('h3', member.name.trim()));
+    for (const field of [member.role, member.department, member.subj]) {
+      if (typeof field === 'string' && field.trim()) details.append(make('p', field.trim()));
+    }
+    profile.append(details);
+    profiles.append(profile);
+    count += 1;
+  }
+  get('staff-directory-empty').hidden = count > 0;
+  if (count) {
+    for (const group of directory.querySelectorAll('[data-staff-tier]')) {
+      group.hidden = !group.querySelector('.staff-profile');
+    }
+    directory.querySelector('.staff-leadership').hidden = !directory.querySelector('.staff-leader:not([hidden])');
+  }
+}
+
+function renderPageContent(pages, staff) {
+  const path = location.pathname.replace(/^\/|(?:\.html)?\/$|\.html$/g, '');
+  const page = path || 'index';
+  const entry = pages[page];
+  const main = get('main');
+  if (!main || !Object.hasOwn(CMS_PAGES, page)) return;
+  const heading = main.querySelector('h1');
+  const intro = main.querySelector('.page-banner .wrap > p, #hero-description');
+  const title = entry?.heading || (page === 'staff' && staff.title);
+  if (heading && title) heading.textContent = title;
+  if (intro && (entry?.intro || (page === 'staff' && staff.desc))) {
+    intro.textContent = entry?.intro || staff.desc;
+  }
+  for (const block of entry?.sections || []) {
+    const section = make('section', '', 'wrap section cms-section');
+    if (block.title) section.append(make('h2', block.title));
+    if (block.body) section.append(make('p', block.body, 'cms-body'));
+    const src = imageSource(block.image);
+    if (src) {
+      const image = make('img');
+      image.src = src;
+      image.alt = block.imageAlt;
+      image.loading = 'lazy';
+      section.append(image);
+    }
+    if (block.linkLabel && /^(?:\/(?!\/)|https:\/\/)/i.test(block.link) && URL.canParse(block.link, location.origin)) {
+      const link = make('a', block.linkLabel, 'button button-primary');
+      const target = new URL(block.link, location.origin);
+      if (target.protocol === 'https:' || target.origin === location.origin) {
+        link.href = target.href;
+        section.append(link);
+      }
+    }
+    main.append(section);
+  }
+}
+
 function renderSchool(data) {
   const {logo, hero, about, acad, adm, contact} = data;
   const [first, emphasis, last] = hero.title.split('*', 3);
@@ -138,7 +211,8 @@ function renderSchool(data) {
   const lifeUpdates = get('school-life-updates');
   renderGroup(lifeUpdates, data.fac.title, data.fac.desc, data.fac.items.map(f => [f.n, f.d]));
   renderGroup(lifeUpdates, data.co.title, data.co.desc, data.co.items.map(c => [c.n, c.d]));
-  renderGroup(get('school-team'), data.staff.title, data.staff.desc, data.staff.members.map(m => [m.name, [m.role, m.subj].filter(Boolean).join(' · '), m.photo]));
+  renderStaffDirectory(data.staff);
+  renderPageContent(data.pages, data.staff);
 
   const admissionLabels = ['Tuition', 'Boarding', 'Activity levy', 'Admission fee', 'Uniform and books',
     'Applications open', 'Deadline', 'Interviews', 'Results', 'Reporting date'];
@@ -209,14 +283,16 @@ syncMenu();
 async function loadSchool() {
   if (new URLSearchParams(location.search).get('preview') === '1') {
     const draft = readSchoolDraft();
-    if (draft) renderSchool(mergeSchoolContent(draft));
     for (const link of document.querySelectorAll('a[href^="/"]')) {
       const target = new URL(link.href);
-      if (target.origin !== location.origin || !/^\/(?:about|academics|school-life|joining|resources|visit)?$/.test(target.pathname)) continue;
+      if (target.origin !== location.origin || !/^\/(?:about|academics|school-life|joining|resources|visit|staff)?$/.test(target.pathname)) continue;
       target.searchParams.set('preview', '1');
       link.href = target.href;
     }
-    return;
+    if (draft) {
+      renderSchool(mergeSchoolContent(draft));
+      return;
+    }
   }
   if (location.protocol === 'file:') return;
   try {

@@ -1,6 +1,6 @@
 # Kasikeu Girls Secondary School
 
-The public site includes dedicated pages for school history, academics and results, boarding and activities, joining and reporting, learning resources, and visiting the campus. Each page is directly addressable and uses the same stylesheet and content settings.
+The public site includes dedicated pages for school history, academics and results, boarding and activities, joining and reporting, learning resources, visiting the campus, and staff. Each page is directly addressable and uses the same stylesheet and content settings.
 
 The public site is plain HTML, CSS and JavaScript. The build needs Node.js and has no package dependencies. Edit `site-header.html` or `site-footer.html` to update those sections across the public site. Individual pages keep their own main content.
 
@@ -10,11 +10,9 @@ Run `node build.mjs` to assemble the pages and assets in `dist/`. Vercel runs th
 
 ## Edit and publish content
 
-Open `/admin.html` to edit a browser-local draft. If the public site already has custom content, import the current `school-content.json` before editing in a new browser. Select **Save All**, then **Preview** to review your draft. Existing drafts from the earlier site may contain 2025 dates and sample information. Review those fields before exporting.
+Open `/admin` to update school content. Use **Pages** for headings, introductions, and extra sections across public pages. In **Staff & Team**, create or edit staff members and select their group. The public **Staff** page groups profiles in leadership and teaching order. Select **Preview** to review the browser-local draft and **Publish website** to send it to GitHub. A fine-grained GitHub token scoped to this repository needs Contents read and write access. Enter the token inside the editor when prompted. It is not saved. Vercel deploys the resulting content commit.
 
-Choose **Export Website Content** and replace `school-content.json` in the repository with the downloaded file. Review the changes, then commit and deploy through the existing Vercel project. Everyone sees the published JSON. **Export Backup** downloads a separate backup copy.
-
-Only include material approved for public release. The admin page is a static editor and public visitors can open it, but browser drafts are local and publishing requires repository access.
+**Export Backup** and **Import Backup** are available for keeping local copies. If the live content changes after you started editing, export a backup before loading the latest published version and applying your edits again. Only publish material approved for public release.
 
 ## Sources for the public defaults
 

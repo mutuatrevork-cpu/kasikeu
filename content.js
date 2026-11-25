@@ -1,3 +1,34 @@
+const STAFF_TIERS = {
+  principal: 'Principal',
+  deputy: 'Deputy Principal',
+  hod: 'Heads of Department',
+  senior: 'Senior Teachers',
+  teacher: 'Teachers',
+  support: 'Administrative and Support Staff',
+};
+
+const CMS_PAGES = {
+  index: 'Home',
+  about: 'Our school',
+  academics: 'Academics',
+  'school-life': 'School life',
+  joining: 'Joining and reporting',
+  resources: 'Resources',
+  visit: 'Visit us',
+  staff: 'Staff',
+};
+
+function staffTier(member) {
+  if (Object.hasOwn(STAFF_TIERS, member.tier)) return member.tier;
+  const role = typeof member.role === 'string' ? member.role : '';
+  if (/\bdeputy\b/i.test(role)) return 'deputy';
+  if (/\bprincipal\b/i.test(role)) return 'principal';
+  if (/\b(?:hod|head of department|department head)\b/i.test(role)) return 'hod';
+  if (/\bsenior teacher\b/i.test(role)) return 'senior';
+  if (/\b(?:support|administrator|secretary|bursar|librarian)\b/i.test(role)) return 'support';
+  return 'teacher';
+}
+
 const SCHOOL_DEFAULTS = {
   logo: {name: 'Kasikeu Girls', tag: 'Secondary School', letter: 'K', fname: 'Kasikeu Girls Secondary School', fsub: '', fdesc: 'Mukaa Sub-County · Makueni County, Kenya', copy: 'Kasikeu Girls Secondary School'},
   logo_img: null,
@@ -39,7 +70,8 @@ const SCHOOL_DEFAULTS = {
     addr: 'Kasikeu, Mukaa Sub-County\nMakueni County, Kenya',
     p1: '', p2: '', e1: '', e2: '', h1: '', h2: '', fb: '', tw: '', wa: '', yt: ''
   },
-  ann: {items: []}
+  ann: {items: []},
+  pages: {}
 };
 
 const SCHOOL_STORAGE_KEY = 'kgss_v1';
@@ -70,6 +102,24 @@ function mergeSchoolContent(source) {
         }
       }
     }
+  }
+  for (const page of Object.keys(CMS_PAGES)) {
+    const entry = source?.pages?.[page];
+    if (!entry || typeof entry !== 'object') continue;
+    const readText = value => typeof value === 'string' ? value.trim() : '';
+    const sections = Array.isArray(entry.sections) ? entry.sections.map(section => ({
+      title: readText(section?.title),
+      body: readText(section?.body),
+      image: readText(section?.image),
+      imageAlt: readText(section?.imageAlt),
+      link: readText(section?.link),
+      linkLabel: readText(section?.linkLabel),
+    })).filter(section => section.title || section.body || section.image || section.link) : [];
+    result.pages[page] = {
+      heading: readText(entry.heading),
+      intro: readText(entry.intro),
+      sections,
+    };
   }
   return result;
 }

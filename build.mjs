@@ -2,9 +2,9 @@ import { copyFile, mkdir, readFile, writeFile } from 'node:fs/promises';
 
 const source = new URL('./', import.meta.url);
 const output = new URL('./dist/', source);
-const pageNames = ['index', 'about', 'academics', 'school-life', 'joining', 'resources', 'visit'];
+const pageNames = ['index', 'about', 'academics', 'school-life', 'joining', 'resources', 'visit', 'staff'];
 const assets = [
-  'admin.html', 'content.js', 'site.js', 'styles.css', 'school-content.json',
+  'admin.html', 'admin-publish.js', 'content.js', 'site.js', 'styles.css', 'school-content.json',
   'school-crest.png', 'favicon.ico', 'lake-nakuru-group.webp',
   'lake-nakuru-students.webp', 'school-hero.webp', 'school-learning.webp',
 ];

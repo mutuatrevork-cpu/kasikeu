@@ -174,6 +174,14 @@ img{display:block;max-width:100%;}
   .dash-grid{grid-template-columns:1fr 1fr;}
   .staff-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));}
 }
+#publish-dialog{width:min(30rem,calc(100% - 2rem));padding:1.5rem;border:1px solid var(--bdr);border-radius:12px;background:var(--card,#fff);color:var(--txt,#132143)}
+#publish-dialog::backdrop{background:#10204099}
+#publish-dialog h2{margin:0 0 .6rem}
+#publish-dialog p{margin:.6rem 0 .9rem}
+#publish-dialog label{display:block;font-weight:600;margin-bottom:.25rem}
+#publish-token{width:100%}
+.publish-actions{display:flex;gap:.5rem;justify-content:flex-end}
+#publish-status{padding:.7rem 1rem;background:#eaf1ff;color:#173771;font-size:.9rem}
 </style>
 </head>
 <body>
@@ -202,6 +210,7 @@ img{display:block;max-width:100%;}
     <button class="sb-btn" onclick="go('staff',this)"><span class="ic">👩‍🏫</span>Staff &amp; Team</button>
     <button class="sb-btn" onclick="go('news',this)"><span class="ic">📰</span>News &amp; Events</button>
     <button class="sb-btn" onclick="go('contact',this)"><span class="ic">📞</span>Contact Info</button>
+    <button class="sb-btn" onclick="go('pages',this)">Pages</button>
     <div class="sb-hd">Tools</div>
     <button class="sb-btn" onclick="exportData()"><span class="ic">💾</span>Export Backup</button>
     <button class="sb-btn" onclick="exportData(true)">Export Website Content</button>
@@ -221,8 +230,9 @@ img{display:block;max-width:100%;}
     <span id="PTITLE">Dashboard</span>
   </div>
   <div class="tb-r">
+    <button class="btn btn-g btn-sm" type="button" id="open-publish" disabled>Publish website</button>
     <span id="SS">All saved ✅</span>
-    <button class="btn btn-out btn-sm" onclick="window.open('/?preview=1','_blank','noopener')">👁 Preview</button>
+    <button class="btn btn-out btn-sm" onclick="saveAll(); window.open('/?preview=1','_blank','noopener')">👁 Preview</button>
     <button class="btn btn-g btn-sm" onclick="saveAll()">💾 Save All</button>
   </div>
 </div>
@@ -230,12 +240,40 @@ img{display:block;max-width:100%;}
 <!-- TOAST -->
 <div id="TOAST"></div>
 
+<dialog id="publish-dialog" aria-labelledby="publish-title">
+  <form id="publish-form" method="dialog">
+    <h2 id="publish-title">Publish to the school website</h2>
+    <p>Publishes your current edits to every visitor after Vercel deploys them.</p>
+    <label for="publish-token">GitHub publishing token</label>
+    <input id="publish-token" type="password" autocomplete="off" spellcheck="false" required>
+    <p class="hint">Use a fine-grained token for this repository with Contents read and write access. It is sent only to GitHub for this action.</p>
+    <div class="publish-actions">
+      <button type="button" id="publish-cancel" class="btn btn-out">Cancel</button>
+      <button type="submit" id="publish-submit" class="btn btn-g">Publish now</button>
+    </div>
+  </form>
+</dialog>
+<div id="publish-status" role="status" aria-live="polite" hidden></div>
+
 <!-- MAIN -->
 <main id="MAIN">
+<div class="panel" id="panel-pages">
+  <div class="card">
+    <div class="card-hd"><h3>Pages</h3><div><button class="btn btn-out btn-sm" type="button" onclick="previewEditedPage()">Preview page</button>
+    <button class="btn btn-g btn-sm" type="button" onclick="savePageEditor(); persist(); toast('Page draft saved');">Save page draft</button></div></div>
+    <div class="card-bd">
+      <div class="fg"><label for="cms-page">Choose a page</label><select id="cms-page" onchange="switchPageEditor()"></select></div>
+      <div class="fg"><label for="cms-heading">Page heading</label><input id="cms-heading" type="text" placeholder="Use the built-in heading"></div>
+      <div class="fg"><label for="cms-intro">Page introduction</label><textarea id="cms-intro" placeholder="Use the built-in introduction"></textarea></div>
+      <div class="card-hd"><h3>Additional sections</h3><button class="btn btn-out btn-sm" type="button" onclick="appendPageSection()">Add section</button></div>
+      <div id="cms-sections"></div>
+    </div>
+  </div>
+</div>
 
 <!-- ══ DASHBOARD ══ -->
 <div class="panel on" id="panel-dashboard">
-  <div class="warn">Drafts are saved in this browser. Preview the draft, then export the reviewed website content and commit it as <strong>school-content.json</strong> to update the public site.</div>
+  <div class="warn">Drafts are saved in this browser. Use Preview to review your edits, then choose <strong>Publish website</strong> to update the public site.</div>
   <div class="dash-grid">
         <div class="dc"><div class="di">👩‍🎓</div><div class="dv" id="d_students">—</div><div class="dl">Students</div></div>
     <div class="dc"><div class="di">👩‍🏫</div><div class="dv" id="d_staff">8</div><div class="dl">Staff</div></div>
@@ -246,7 +284,7 @@ img{display:block;max-width:100%;}
   <div class="card">
     <div class="card-hd"><h3>⚡ Quick Start Guide</h3></div>
     <div class="card-bd">
-      <p class="hint">Save your draft and use Preview to review it. Export Backup keeps a separate copy. Export Website Content downloads the file to publish with the site. Review school dates, fees, and contact details before publishing.</p>
+      <p class="hint">Save your draft and use Preview to review it. Publish website sends the update to the live site. Export Backup keeps a separate copy. Review school dates, fees, and contact details before publishing.</p>
     </div>
   </div>
 </div>
@@ -561,10 +599,12 @@ img{display:block;max-width:100%;}
 <!-- MODAL: Add Staff -->
 <div class="modal-wrap" id="staffModal">
   <div class="modal">
-    <div class="modal-hd"><h3>Add Team Member</h3><button class="mc" onclick="closeModal('staffModal')">✕</button></div>
-    <div class="fg"><label>Full Name</label><input id="m_name" type="text" placeholder="Mrs. Grace Mutua"/></div>
-    <div class="fg"><label>Role / Title</label><input id="m_role" type="text" placeholder="Principal"/></div>
-    <div class="fg"><label>Qualification / Subject</label><input id="m_subj" type="text" placeholder="B.Ed · M.Ed Administration"/></div>
+    <div class="modal-hd"><h3 id="staff-modal-title">Add staff member</h3><button class="mc" onclick="closeModal('staffModal')">✕</button></div>
+    <div class="fg"><label for="m_name">Full name</label><input id="m_name" type="text"/></div>
+    <div class="fg"><label for="m_tier">Staff group</label><select id="m_tier"></select></div>
+    <div class="fg"><label for="m_role">Role or job title</label><input id="m_role" type="text" placeholder="e.g. Head of Mathematics"/></div>
+    <div class="fg"><label for="m_department">Department</label><input id="m_department" type="text" placeholder="e.g. Mathematics"/></div>
+    <div class="fg"><label for="m_subj">Subject or qualifications</label><input id="m_subj" type="text"/></div>
     <div class="fg"><label>Emoji (shown if no photo)</label><input id="m_emoji" type="text" value="👩‍🏫" maxlength="4" style="max-width:80px"/></div>
     <div class="fg">
       <label>Photo</label>
@@ -573,11 +613,12 @@ img{display:block;max-width:100%;}
         <div class="uico">📷</div><strong>Upload Photo</strong><p>Passport-style · auto-compressed</p>
       </div>
       <div style="text-align:center;margin-top:.4rem">
-        <img id="m_prev" class="prev-sm" style="display:none"/>
+        <img id="m_prev" class="prev-sm" alt="" style="display:none"/>
+        <button type="button" class="btn btn-out btn-sm" onclick="clearStaffPhoto()">Clear photo</button>
       </div>
     </div>
     <div style="display:flex;gap:.4rem;margin-top:.5rem">
-      <button class="btn btn-g" style="flex:1" onclick="confirmAddStaff()">Add Member</button>
+      <button id="staff-modal-save" class="btn btn-g" style="flex:1" onclick="confirmAddStaff()">Add staff member</button>
       <button class="btn btn-out" onclick="closeModal('staffModal')">Cancel</button>
     </div>
   </div>
@@ -607,6 +648,9 @@ const KEY = SCHOOL_STORAGE_KEY;
 const DEF = SCHOOL_DEFAULTS;
 let D = {};
 let _newPhoto = null;
+let editingStaffIndex = null;
+let staffPhotoRequest = 0;
+let editablePage = 'index';
 
 /* ── HELPERS ── */
 const $  = id => document.getElementById(id);
@@ -634,6 +678,7 @@ function persist(){
     const slim = JSON.parse(JSON.stringify(D));
     slim.logo_img = null; slim.hero_bg = null; slim.about_photo = null;
     if(slim.staff && slim.staff.members) slim.staff.members.forEach(m=>m.photo=null);
+    for (const page of Object.values(slim.pages)) page.sections.forEach(section => section.image = '');
     try { localStorage.setItem(KEY, JSON.stringify(slim)); $('SS').textContent='⚠️ Saved (no images)'; } catch(e2){}
     toast('Storage full — images removed. Use Export to back them up.', false);
   }
@@ -719,7 +764,7 @@ function closeSB(){
 }
 
 /* ── PANEL NAV ── */
-const PTITLES={dashboard:'Dashboard',logo:'Logo & Branding',hero:'Hero Section',ann:'Announcements',about:'About Section',acad:'Academics',fac:'Facilities',co:'Co-Curricular',adm:'Admissions',staff:'Staff & Team',news:'News & Events',contact:'Contact Info'};
+const PTITLES={pages:'Pages',dashboard:'Dashboard',logo:'Logo & Branding',hero:'Hero Section',ann:'Announcements',about:'About Section',acad:'Academics',fac:'Facilities',co:'Co-Curricular',adm:'Admissions',staff:'Staff & Team',news:'News & Events',contact:'Contact Info'};
 function go(id, btn){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
   document.querySelectorAll('.sb-btn').forEach(b=>b.classList.remove('on'));
@@ -738,6 +783,7 @@ document.querySelectorAll('.modal-wrap').forEach(m=>{
 
 /* ── FILL ALL FIELDS ── */
 function fillAll(){
+  fillPageEditor();
   const L=D.logo||{};
   sv('logo_name',L.name); sv('logo_tag',L.tag); sv('logo_letter',L.letter);
   sv('logo_fname',L.fname); sv('logo_fsub',L.fsub); sv('logo_fdesc',L.fdesc); sv('logo_copy',L.copy);
@@ -826,6 +872,7 @@ function save(k){
 }
 
 function saveAll(){
+  savePageEditor();
   ['logo','hero','about','acad','adm','staff','contact'].forEach(save);
   saveAnns(); saveFacs(); saveClubs(); saveNews();
   toast('All sections saved!');
@@ -930,9 +977,11 @@ function renderStaff(){
       <button class="sc-del" onclick="delStaff(${i})" title="Remove">✕</button>
       ${ph}
       <h4>${esc(m.name)}</h4>
-      <div class="role">${esc(m.role)}</div>
+      <div class="role">${esc(m.role || STAFF_TIERS[staffTier(m)])}</div>
+      <div class="subj">${esc(m.department)}</div>
       <div class="subj">${esc(m.subj)}</div>
       <div class="sc-actions">
+        <button type="button" class="btn btn-out btn-sm" onclick="openAddStaff(${i})">Edit</button>
         <label class="photo-label">
           📷 Photo
           <input type="file" accept="image/*" onchange="updateStaffPhoto(event,${i})"/>
@@ -943,28 +992,63 @@ function renderStaff(){
   });
   updateDash();
 }
-function openAddStaff(){
-  $('m_name').value=''; $('m_role').value=''; $('m_subj').value='';
-  $('m_emoji').value='👩‍🏫'; $('m_prev').style.display='none';
-  _newPhoto=null;
+function openAddStaff(index = null){
+  editingStaffIndex = index;
+  staffPhotoRequest += 1;
+  const member = D.staff.members[index];
+  $('staff-modal-title').textContent = member ? 'Edit staff member' : 'Add staff member';
+  $('staff-modal-save').textContent = member ? 'Save staff member' : 'Add staff member';
+  $('staff-modal-save').disabled = false;
+  sv('m_name', member?.name);
+  sv('m_role', member?.role);
+  sv('m_subj', member?.subj);
+  sv('m_department', member?.department);
+  sv('m_emoji', member?.emoji);
+  $('m_tier').replaceChildren(...Object.entries(STAFF_TIERS).map(([value, label]) => new Option(label, value)));
+  sv('m_tier', member ? staffTier(member) : 'teacher');
+  setStaffPhoto(member?.photo || null);
   openModal('staffModal');
 }
-function previewNewStaff(ev){
-  const file=ev.target.files && ev.target.files[0]; ev.target.value='';
-  if(!file)return;
-  toast('Processing…',true);
-  compressImg(file,400,400,0.75).then(d=>{
-    _newPhoto=d;
-    const p=$('m_prev'); p.src=d; p.style.display='block';
-    toast('Photo ready ✓');
-  }).catch(e=>toast('Photo error: '+e,false));
+function setStaffPhoto(photo){
+  _newPhoto = photo;
+  const preview = $('m_prev');
+  if (photo) preview.src = photo;
+  else preview.removeAttribute('src');
+  preview.style.display = photo ? 'inline-block' : 'none';
+}
+function clearStaffPhoto(){
+  staffPhotoRequest += 1;
+  setStaffPhoto(null);
+  $('staff-modal-save').disabled = false;
+}
+async function previewNewStaff(event){
+  const file = event.target.files[0];
+  event.target.value = '';
+  if (!file) return;
+  const request = ++staffPhotoRequest;
+  $('staff-modal-save').disabled = true;
+  try {
+    const photo = await compressImg(file, 400, 400, 0.75);
+    if (request === staffPhotoRequest) setStaffPhoto(photo);
+  } catch (error) {
+    if (request === staffPhotoRequest) toast('Photo error: ' + error, false);
+  } finally {
+    if (request === staffPhotoRequest) $('staff-modal-save').disabled = false;
+  }
 }
 function confirmAddStaff(){
-  const name=gv('m_name').trim();
-  if(!name){toast('Name is required',false);return;}
-  if(!D.staff) D.staff={members:[]};
-  D.staff.members.push({name,role:gv('m_role'),subj:gv('m_subj'),emoji:gv('m_emoji')||'👩‍🏫',photo:_newPhoto});
-  persist(); closeModal('staffModal'); renderStaff(); toast('Member added!');
+  const name = gv('m_name').trim();
+  if (!name) { toast('Name is required', false); return; }
+  const member = {
+    name, tier: gv('m_tier'), role: gv('m_role').trim(), department: gv('m_department').trim(),
+    subj: gv('m_subj').trim(), emoji: gv('m_emoji'), photo: _newPhoto,
+  };
+  if (editingStaffIndex === null) D.staff.members.push(member);
+  else D.staff.members[editingStaffIndex] = member;
+  persist();
+  closeModal('staffModal');
+  renderStaff();
+  toast('Staff draft saved');
 }
 function delStaff(i){
   if(!confirm('Remove this staff member?'))return;
@@ -1089,10 +1173,88 @@ function resetData(){
 }
 
 /* ── INIT ── */
-(function init(){
-  D = mergeSchoolContent(readSchoolDraft());
-  fillAll();
-})();
+function appendPageSection(section = {}) {
+  const row = document.createElement('fieldset');
+  row.className = 'card card-bd';
+  row.innerHTML = `
+    <label class="fg">Section title<input data-field="title" type="text"></label>
+    <label class="fg">Section text<textarea></textarea></label>
+    <label class="fg">Section photo<input type="file" accept="image/*"></label>
+    <img class="prev-sm" alt="" hidden>
+    <button type="button" class="btn btn-out btn-sm" data-remove-photo>Clear photo</button>
+    <label class="fg">Photo description<input data-field="imageAlt" type="text"></label>
+    <label class="fg">Link label<input data-field="linkLabel" type="text"></label>
+    <label class="fg">Link address<input data-field="link" type="text" placeholder="/academics or https://…"></label>
+    <button type="button" class="btn btn-out btn-sm" data-remove-section>Remove section</button>`;
+  for (const input of row.querySelectorAll('[data-field]')) input.value = section[input.dataset.field] || '';
+  row.querySelector('textarea').value = section.body || '';
+  const preview = row.querySelector('img');
+  let imageRequest = 0;
+  const showPhoto = source => {
+    row.dataset.image = source;
+    preview.hidden = !source;
+    if (source) preview.src = source;
+    else preview.removeAttribute('src');
+  };
+  showPhoto(/^data:image\/(?:jpeg|png|webp|gif);base64,[a-z\d+/]+=*$/i.test(section.image || '') ? section.image : '');
+  row.querySelector('input[type="file"]').addEventListener('change', async event => {
+    const file = event.target.files[0];
+    event.target.value = '';
+    if (!file) return;
+    const request = ++imageRequest;
+    try {
+      const photo = await compressImg(file, 850, 650, 0.72);
+      if (request === imageRequest && row.isConnected) showPhoto(photo);
+    } catch (error) {
+      toast('Photo error: ' + error, false);
+    }
+  });
+  row.querySelector('[data-remove-photo]').addEventListener('click', () => {
+    imageRequest += 1;
+    showPhoto('');
+  });
+  row.querySelector('[data-remove-section]').addEventListener('click', () => row.remove());
+  $('cms-sections').append(row);
+}
+function fillPageEditor() {
+  const picker = $('cms-page');
+  if (!picker.options.length) {
+    picker.replaceChildren(...Object.entries(CMS_PAGES).map(([value, label]) => new Option(label, value)));
+  }
+  picker.value = editablePage;
+  const page = D.pages[editablePage] || {};
+  sv('cms-heading', page.heading);
+  sv('cms-intro', page.intro);
+  $('cms-sections').replaceChildren();
+  for (const section of page.sections || []) appendPageSection(section);
+}
+function savePageEditor() {
+  const sections = Array.from($('cms-sections').children, row => ({
+    ...Object.fromEntries(Array.from(row.querySelectorAll('[data-field]'), input => [input.dataset.field, input.value.trim()])),
+    body: row.querySelector('textarea').value.trim(),
+    image: row.dataset.image,
+  })).filter(section => section.title || section.body || section.image || section.link);
+  const heading = gv('cms-heading').trim();
+  const intro = gv('cms-intro').trim();
+  if (heading || intro || sections.length) D.pages[editablePage] = { heading, intro, sections };
+  else delete D.pages[editablePage];
+}
+function previewEditedPage() {
+  saveAll();
+  const route = editablePage === 'index' ? '/' : '/' + editablePage;
+  window.open(route + '?preview=1', '_blank', 'noopener');
+}
+function switchPageEditor() {
+  const next = gv('cms-page');
+  savePageEditor();
+  editablePage = next;
+  fillPageEditor();
+}
+
+const initialDraft = readSchoolDraft();
+D = mergeSchoolContent(initialDraft);
+fillAll();
 </script>
+<script src="/admin-publish.js"></script>
 </body>
 </html>

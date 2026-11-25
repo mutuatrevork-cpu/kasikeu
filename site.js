@@ -82,6 +82,7 @@ function renderSchool(data) {
   if (about.mission) {
     setText('about-note-title', 'Our mission');
     setText('about-note-text', about.mission);
+    get('about-note').hidden = false;
   }
   if (about.desc2) get('about-description').after(make('p', about.desc2, 'intro'));
   const logoSource = imageSource(data.logo_img);
@@ -102,6 +103,7 @@ function renderSchool(data) {
   if (aboutSource) {
     get('about-photo').src = aboutSource;
     get('about-photo').hidden = false;
+    get('about-note').hidden = false;
   }
 
   const details = get('contact-details');

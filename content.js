@@ -7,14 +7,14 @@ const SCHOOL_DEFAULTS = {
     badge: 'Mukaa · Makueni County, Kenya',
     title: 'Kasikeu Girls *Secondary School*',
     sub: '',
-    desc: 'A public girls’ boarding school where learners can pursue STEM or Social Sciences in senior school.',
-    btn1: 'Plan your Grade 10 entry',
-    btn2: 'Explore pathways',
+    desc: 'A public girls’ boarding school in Mukaa, Makueni County. Get to know our school, its history, and life beyond the classroom.',
+    btn1: 'Explore our school',
+    btn2: 'Find our campus',
     s1n: '', s1l: '', s2n: '', s2l: '', s3n: '', s3l: '', s4n: '', s4l: ''
   },
   about: {
-    lbl: 'Our school',
-    title: 'A girls’ boarding school in Makueni',
+    lbl: 'Our history',
+    title: 'Rooted in Kasikeu',
     desc: 'Kasikeu Girls Secondary School is listed as Kasikeu Girls High School in the senior school register. The school serves girls in Mukaa Sub-County, Makueni County.',
     mission: '', desc2: '', b1n: '', b1l: '', b2n: '', b2l: '', b3n: '', b3l: '', b4n: '', b4l: ''
   },

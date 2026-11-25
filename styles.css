@@ -78,10 +78,25 @@ nav a:hover { text-decoration: underline; }
 .note p { margin-top: 0.55rem; color: var(--muted); }
 .note img { margin-top: 1rem; border-radius: 0.5rem; }
 .about-layout { align-items: center; }
-.school-notes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin-top: 1.6rem; }
-.school-notes .note { border-top-width: 1px; border-left: 4px solid #c59a48; }
-.school-notes .note + .note { border-left-color: var(--green); }
 .text-link { display: inline-block; margin-top: 0.7rem; color: var(--green); font-weight: 700; }
+.milestones, .life-grid { display: grid; gap: 1rem; margin: 2rem 0 0; }
+.milestones { grid-template-columns: repeat(4, minmax(0, 1fr)); padding: 0; list-style: none; }
+.milestones li { padding: 1.1rem 0.8rem 0.4rem 0; border-top: 2px solid #c59a48; }
+.milestones time, .milestones .year { display: block; margin-bottom: 0.65rem; color: var(--green); font-weight: 800; }
+.milestones p, .life-card > p:not(.eyebrow) { margin-top: 0.5rem; color: var(--muted); }
+.milestones a, .life-card a { display: inline-block; margin-top: 0.65rem; color: var(--green); font-size: 0.87rem; font-weight: 700; }
+.school-mission { margin-top: 1.6rem; }
+.school-mission p:empty { display: none; }
+.performance { background: var(--green-soft); }
+.record-panel { min-width: 0; padding: clamp(0.6rem, 2vw, 1.4rem); border: 1px solid var(--line); border-radius: 0.8rem; background: white; }
+.record-panel table { width: 100%; border-collapse: collapse; text-align: left; font-size: clamp(0.8rem, 1.6vw, 0.96rem); }
+.record-panel caption { padding: 0.4rem 0.3rem 0.7rem; color: var(--green); text-align: left; font-weight: 750; }
+.record-panel th, .record-panel td { border-bottom: 1px solid var(--line); padding: 0.7rem clamp(0.25rem, 1vw, 0.6rem); }
+.record-panel thead { background: var(--wash); }
+.record-panel th[scope="row"] { font-variant-numeric: tabular-nums; }
+.life-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.life-card { padding: clamp(1.1rem, 3vw, 1.65rem); border: 1px solid var(--line); border-radius: 0.8rem; background: white; }
+.life-card h3 { font-size: 1.25rem; }
 .pathway-grid, .update-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin-top: 1.65rem; }
 .pathway, .update-card { padding: clamp(1.2rem, 3vw, 2rem); border: 1px solid var(--line); border-radius: 0.85rem; background: white; }
 .pathway h3 { font-size: clamp(1.75rem, 3vw, 2.55rem); }
@@ -113,6 +128,9 @@ nav a:hover { text-decoration: underline; }
 .update-card img { max-height: 12rem; object-fit: cover; margin-bottom: 0.8rem; border-radius: 0.4rem; }
 #contact-details { margin-top: 0.75rem; overflow-wrap: anywhere; }
 #contact-address { white-space: pre-line; }
+.campus-map { margin-top: 1.6rem; overflow: hidden; border: 1px solid var(--line); border-radius: 0.85rem; background: var(--wash); }
+.campus-map iframe { display: block; width: 100%; height: clamp(17rem, 42vw, 25rem); border: 0; }
+.campus-map > a { display: block; padding: 0.75rem 1rem; color: var(--green); font-weight: 700; }
 footer { padding-block: 2rem; background: #101e38; color: white; }
 .footer-inner { display: flex; align-items: start; justify-content: space-between; flex-wrap: wrap; gap: 1rem 2rem; }
 .footer-inner p, footer small { color: #c0cde4; }
@@ -126,7 +144,11 @@ footer small { flex-basis: 100%; border-top: 1px solid #a1b3d34f; padding-top: 0
   .facts-grid { grid-template-columns: repeat(2, 1fr); }
   .facts-grid div:nth-child(3) { border-left: 0; }
   .facts-grid div:nth-child(n+3) { border-top: 1px solid #e4d9c3; }
-  .pathway-grid, .update-grid, .school-notes { grid-template-columns: 1fr; }
+  .pathway-grid, .update-grid { grid-template-columns: 1fr; }
+  .milestones, .life-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 34rem) {
+  .life-grid { grid-template-columns: 1fr; }
 }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }

@@ -19,5 +19,9 @@ Only include material approved for public release. The admin page is a static ed
 - [Ministry of Education Grade 10 selection and placement](https://selection-and-placement.kemis.go.ke/)
 - [Kasikeu Girls school listing and October 2026 subject combinations](https://www.shulezote.co.ke/school/kasikeu-girls-sec-sch/)
 - [Senior school register, row 5233](https://educationboard.co.ke/wp-content/uploads/2025/06/senior-schools-in-kenya-1.pdf)
+- [Teacher.co.ke senior school profile and grade range](https://teacher.co.ke/kasikeu-girls-senior-school-cv7s/)
+- [NURU’s Kasikeu Girls gallery](https://nuru.org.uk/gallery/kasikeu-girls-high-school/) and [partner-school listing](https://nuru.org.uk/gallery/)
 
-The public defaults omit school fees, reporting dates, staff details, phone numbers, email addresses, and campus photos pending confirmation from the school. Update the pathway cards in `index.html` if official combinations change.
+The two images included with the public site are generated illustrations. The site labels them and links to NURU’s school gallery for documentary photos. Replace the imagery with approved school photos when available.
+
+The public defaults omit school fees, reporting dates, staff details, and direct contact details pending confirmation from the school. Update the pathway cards in `index.html` if official combinations change.

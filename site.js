@@ -92,7 +92,12 @@ function renderSchool(data) {
     get('school-mark').replaceChildren(image);
   }
   const heroSource = imageSource(data.hero_bg);
-  if (heroSource) document.querySelector('.hero-photo').style.backgroundImage = 'url("' + heroSource + '")';
+  if (heroSource) {
+    const visual = document.querySelector('.hero-visual');
+    visual.querySelector('img').src = heroSource;
+    visual.querySelector('img').alt = '';
+    visual.querySelector('figcaption').hidden = true;
+  }
   const aboutSource = imageSource(data.about_photo);
   if (aboutSource) {
     get('about-photo').src = aboutSource;
@@ -150,7 +155,7 @@ function renderFacts(list, record, prefix) {
 
 const menu = document.querySelector('.menu');
 const nav = get('site-nav');
-const narrow = matchMedia('(max-width: 48rem)');
+const narrow = matchMedia('(max-width: 56rem)');
 function setMenu(open) {
   menu.setAttribute('aria-expanded', String(open));
   nav.hidden = narrow.matches && !open;

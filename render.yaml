@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: kasikeu-portal-demo
+    runtime: rust
+    plan: free
+    buildCommand: python3 -m zipfile -e rust-portal-source.zip . && cargo build --release --locked --manifest-path portal/Cargo.toml
+    startCommand: ./portal/target/release/kasikeu-portal
+    healthCheckPath: /health
+    envVars:
+      - key: RUSTUP_TOOLCHAIN
+        value: "1.100.0"
+      - key: PORTAL_DEMO
+        value: "1"
+      - key: PORTAL_ADMIN_PASSWORD
+        sync: false
+      - key: PORTAL_DEMO_PASSWORD
+        sync: false
+      - key: PUBLIC_SITE_ORIGIN
+        value: https://kasikeu.vercel.app
+
